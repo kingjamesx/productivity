@@ -4,7 +4,7 @@ import notification from "../assets/icons/notification.svg";
 
 const Header = () => {
   return (
-    <div className="text-base flex items-center justify-between">
+    <div className="mb-14 text-base flex items-center justify-between">
       <div className="flex items-center h-12">
         <div className="py-3 pl-3 pr-4 border rounded-tl-md rounded-bl-md border-r-0 h-full">
           <img

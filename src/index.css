@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.todo-container {
+  @apply bg-[#EEF2F5] rounded-[10px] w-auto p-3;
+}
