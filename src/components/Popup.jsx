@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import close from "../assets/icons/close.svg";
 
-const Popup = () => {
+const Popup = (props) => {
   const [popup, setPopup] = useState(false);
 
   const closePopupHandler = () => {
-    setPopup(false)
+    props.onClosePopup(false);
+    setPopup(false);
   };
   return (
-    <div className="absolute z-[100] flex justify-center items-center w-screen h-screen bg-[#0000000F] backdrop-blur-sm">
+    <div
+      onClick={closePopupHandler}
+      className="absolute z-[100] flex justify-center items-center w-screen h-screen bg-[#0000000F] backdrop-blur-sm"
+    >
       <div className="bg-white rounded-lg p-4 pt-2">
         <div className="flex item-center justify-between mb-3">
           <h4 className="font-bold text-lg">Create To-do</h4>

@@ -4,10 +4,9 @@ import TaskCard from "./TaskCard";
 import addTodo from "../assets/icons/todo-add.svg";
 import addProgress from "../assets/icons/progress-add.svg";
 
-const Todos = () => {
-  const [popup, setPopup] = useState(false);
+const Todos = (props) => {
   const openPopupHandler = () => {
-    setPopup(true);
+    props.onPopup(true);
   };
   return (
     <section className="h-screen ">
