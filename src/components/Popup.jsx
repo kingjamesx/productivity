@@ -10,7 +10,7 @@ const Popup = (props) => {
   };
   return (
     <div
-      onClick={closePopupHandler}
+    //   onClick={closePopupHandler}
       className="absolute z-[100] flex justify-center items-center w-screen h-screen bg-[#0000000F] backdrop-blur-sm"
     >
       <div className="bg-white rounded-lg p-4 pt-2">
