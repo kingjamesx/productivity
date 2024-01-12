@@ -37,7 +37,7 @@ const Login = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(userSchema) });
 
-  const loginSubmitHandler = async (data) => {
+  const loginSubmitHandler = async (data) => {6
     console.log(data);
     setIsLoading(true);
     setLoginData(data);
@@ -75,13 +75,13 @@ const Login = () => {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center bg-blue-500 bg-opacity-35 bg-bg-login w-[100%] h-screen">
+    <section className="px-3 sm:px-0 overflow-x-hidden overflow-y-scroll flex flex-col items-center justify-center bg-blue-500 bg-opacity-35 bg-bg-login w-screen h-screen">
       <form
         onSubmit={handleSubmit(loginSubmitHandler)}
         action="submit"
-        className="text-base flex flex-col"
+        className="text-base flex flex-col w-full sm:w-[500px]"
       >
-        <div className="flex items-center mb-5 w-[500px] h-14">
+        <div className="flex items-center mb-5 w-full sm:w-[500px] h-14">
           <div className="h-14">
             <img
               src={email}
@@ -97,7 +97,7 @@ const Login = () => {
           />
         </div>
         <p className="text-red-500 -mt-3 mb-3 ">{errors.email?.message}</p>
-        {/* <div className="flex items-center mb-5 w-[500px] h-14">
+        {/* <div className="flex items-center mb-5 w-full sm:w-[500px] h-14">
           <div className="h-full">
             <img
               src={user}
@@ -112,7 +112,7 @@ const Login = () => {
           />
         </div> */}
 
-        <div className="flex items-center mb-5 w-[500px] h-14">
+        <div className="flex items-center mb-5 w-full sm:w-[500px] h-14">
           <div className="h-full">
             <img
               src={lock}
@@ -135,7 +135,7 @@ const Login = () => {
         {/* </Link> */}
       </form>
       <p className="text-base text-center text-white my-3">OR</p>
-      <button className="text-base h-14 w-[500px] border border-white text-white rounded-[4px]">
+      <button className="text-base h-14 w-full sm:w-[500px] border border-white text-white rounded-[4px]">
         SIGNIN WITH GOOGLE
       </button>
     </section>
