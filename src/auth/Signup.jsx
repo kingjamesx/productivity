@@ -7,10 +7,19 @@ import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { app, db } from "../../utils/Firebase";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+
 
 const Signup = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [registerData, setRegisterData] = useState({});
+  const [registrationError, setRegistrationError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const auth = getAuth(app);
+  console.log(typeof errorMessage, registrationError);
 
   //yup schema
   const userSchema = object({
@@ -31,21 +40,64 @@ const Signup = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(userSchema) });
 
-  const registerUserHandler = (data) => {
+  //store registration data
+  // const storeUserData = (userData) => {
+  //   addDoc(collection(db, "users"), userData)
+  //     .then((data) => {
+  //       console.log("Document written with ID: ", data.id);
+  //     })
+  //     .catch((e) => {
+  //       {
+  //         console.error("Error adding document: ", e);
+  //       }
+  //     });
+  // };
+
+  const registerUserHandler = async (data) => {
     console.log(data);
+    setIsLoading(true);
     setRegisterData(data);
-    navigate("/main");
-    toast("Welcome!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      type: 'success'
-    });
+
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password
+    );
+    const user = userCredential.user;
+    console.log(user);
+
+    //create a db using the uid as the doc Id
+    try {
+      await setDoc(doc(db, "users", user.uid), {
+        email: data.email,
+        username: data.username,
+      });
+      console.log("yayyyyyyy");
+    } catch (err) {
+      console.log(err);
+      setRegistrationError(true);
+    }
+
+    try {
+      if (!registrationError) {
+        navigate("/main");
+        setIsLoading(false);
+        toast.success("Welcome!");
+        return user;
+      } else {
+        setIsLoading(false);
+        // return;
+      }
+    } catch (error) {
+      console.log(error);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+
+      setErrorMessage(errorCode);
+      setIsLoading(false);
+      toast.error(errorCode);
+      console.log(errorMessage, errorCode);
+    }
   };
 
   return (
@@ -107,7 +159,7 @@ const Signup = () => {
         <p className="text-red-500 -mt-3 mb-3 ">{errors?.password?.message}</p>
 
         <button className="h-14 bg-white text-[#2148C0] rounded-[4px]">
-          SIGN UP
+          {isLoading ? "SIGNING UP..." : "SIGN UP"}
         </button>
       </form>
       <p className="text-base text-center text-white my-3">OR</p>
