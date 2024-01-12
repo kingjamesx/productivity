@@ -53,6 +53,9 @@ const Login = () => {
         data.password
       );
       const user = userCredential.user;
+      const userToken = user.accessToken;
+      const userUid = user.uid;
+
       console.log(user);
 
       if (!isLoginError) {
