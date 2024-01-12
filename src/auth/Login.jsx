@@ -7,10 +7,18 @@ import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
+import { app, db } from "../../utils/Firebase";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
   const [loginData, setLoginData] = useState({});
+  const [isLoginError, setIsLoginError] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
+
+  const auth = getAuth(app);
 
   //yup schema
   let userSchema = object({
@@ -29,25 +37,38 @@ const Login = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(userSchema) });
 
-  const loginSubmitHandler = (data) => {
+  const loginSubmitHandler = async (data) => {
     console.log(data);
+    setIsLoading(true);
     setLoginData(data);
     reset({
       email: "",
       password: "",
     });
-    navigate("/main");
-    toast("Welcome!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      type: 'success'
-    });
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      const user = userCredential.user;
+      console.log(user);
+
+      if (!isLoginError) {
+        setIsLoading(false);
+        navigate("/main");
+        toast.success("Welcome!");
+      } else {
+        setIsLoading(false);
+        return;
+      }
+    } catch (err) {
+      setIsLoading(false);
+      console.log(err);
+      setLoginError(err.code);
+      toast.error(err.code);
+    }
   };
 
   return (
@@ -106,7 +127,7 @@ const Login = () => {
         <p className="text-red-500 -mt-3 mb-3 ">{errors.password?.message}</p>
         {/* <Link to="/main"> */}
         <button className="h-14 w-full bg-white text-blue-500 rounded-[4px]">
-          LOGIN
+          {isLoading ? "LOGGING IN..." : "LOGIN"}
         </button>
         {/* </Link> */}
       </form>
