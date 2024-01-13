@@ -5,3 +5,10 @@
 .todo-container {
   @apply bg-[#EEF2F5] rounded-[10px] w-auto p-3;
 }
+
+.nav-active {
+  @apply pl-11 bg-[#4391ED1A] bg-opacity-[10%] py-2.5;
+}
+.nav{
+  @apply pl-11
+}

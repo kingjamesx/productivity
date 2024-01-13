@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Todos from "./Todos";
 import Popup from "./Popup";
@@ -21,6 +22,7 @@ const Dashboard = () => {
         <Sidebar />
       </div>
       <div className="w-5/6 pt-7 pl-8 pr-14 overflow-y-auto h-screen">
+        {/* <Outlet onPopup={popupHandler} /> */}
         <Todos onPopup={popupHandler} />
       </div>
     </section>

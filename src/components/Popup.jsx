@@ -1,22 +1,24 @@
 import React, { useState } from "react";
 import close from "../assets/icons/close.svg";
+import Modal from "./Modal";
 
 const Popup = (props) => {
   const [popup, setPopup] = useState(false);
 
-  const closePopupHandler = () => {
+  const closePopupHandler = (data) => {
     props.onClosePopup(false);
     setPopup(false);
   };
   return (
     <div
     //   onClick={closePopupHandler}
-      className="absolute z-[100] flex justify-center items-center w-screen h-screen bg-[#0000000F] backdrop-blur-sm"
+      className="absolute z-[10000] flex justify-center items-center w-screen h-screen "
     >
-      <div className="bg-white rounded-lg p-4 pt-2">
+        <Modal onClose={closePopupHandler}></Modal>
+      <div className="bg-white rounded-lg p-4 pt-2 z-[1000000000]">
         <div className="flex item-center justify-between mb-3">
           <h4 className="font-bold text-lg">Create To-do</h4>
-          <img src={close} alt="close icon" onClick={closePopupHandler} />
+          <img className="cursor-pointer" src={close} alt="close icon" onClick={closePopupHandler} />
         </div>
 
         <div className="flex flex-col w-[400px]">

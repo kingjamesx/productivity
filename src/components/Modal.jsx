@@ -10,7 +10,7 @@ const Modal = (props) => {
   return (
     <div
       onClick={closeModalHandler}
-      className="fixed z-[1000000] flex justify-center items-center w-screen h-screen bg-[#0000000F] backdrop-blur-sm"
+      className="absolute z-[100] flex justify-center items-center w-screen h-screen bg-[#0000000F] backdrop-blur-sm"
     >
       {props.children}
     </div>
