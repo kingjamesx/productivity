@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
+import AuthContext from "../../store/auth-context";
 
 const Modal = (props) => {
-  const [modal, setModal] = useState(false);
+  const ctx = useContext(AuthContext);
 
   const closeModalHandler = () => {
-    props.onClose(false)
-    setModal(false)
+    ctx.popupHandler(false);
   };
   return (
     <div

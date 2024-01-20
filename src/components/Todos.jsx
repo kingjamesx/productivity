@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import Header from "./Header";
 import TaskCard from "./TaskCard";
 import addTodo from "../assets/icons/todo-add.svg";
 import addProgress from "../assets/icons/progress-add.svg";
+import AuthContext from "../../store/auth-context";
 
 const Todos = (props) => {
+  const ctx = useContext(AuthContext);
+
   const openPopupHandler = () => {
-    props.onPopup(true);
+    ctx.popupHandler(true);
   };
+
   return (
     <section className="h-screen ">
       <Header />
