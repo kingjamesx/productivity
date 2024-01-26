@@ -37,7 +37,8 @@ const Login = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(userSchema) });
 
-  const loginSubmitHandler = async (data) => {6
+  const loginSubmitHandler = async (data) => {
+    6;
     console.log(data);
     setIsLoading(true);
     setLoginData(data);
@@ -55,6 +56,9 @@ const Login = () => {
       const user = userCredential.user;
       const userToken = user.accessToken;
       const userUid = user.uid;
+    
+      sessionStorage.setItem("uid", userUid);
+      // sessionStorage.setItem("username", userUid);
 
       console.log(user);
 

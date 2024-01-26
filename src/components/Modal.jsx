@@ -7,12 +7,15 @@ const Modal = (props) => {
   const closeModalHandler = () => {
     ctx.popupHandler(false);
   };
+//   top-0 left-0  z-[1000]
   return (
     <div
       onClick={closeModalHandler}
-      className="absolute z-[100] flex justify-center items-center w-screen h-screen bg-[#0000000F] backdrop-blur-sm"
+      className="fixed top-0 left-0  flex justify-center items-center w-screen h-screen bg-[#0000000F] backdrop-blur-sm"
     >
-      {props.children}
+      <div className="flex items-center justify-center w-screen h-screen">
+        {props.children}
+      </div>
     </div>
   );
 };

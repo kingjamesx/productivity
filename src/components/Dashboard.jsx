@@ -8,9 +8,11 @@ import AuthContext from "../../store/auth-context";
 const Dashboard = () => {
   const ctx = useContext(AuthContext);
 
+  const updateTodoHandler = () => {};
+
   return (
-    <section className="flex relative ">
-      {ctx.popup && <Popup />}
+    <section className="flex relative w-screen ">
+      {/* {ctx.popup && <Popup />} */}
       {/* {ctx.popup && <Popup onClosePopup={closePopupHandler} />} */}
       <div className="w-1/6">
         <Sidebar />

@@ -1,19 +1,55 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "./Header";
 import TaskCard from "./TaskCard";
+import Popup from "./Popup";
 import addTodo from "../assets/icons/todo-add.svg";
 import addProgress from "../assets/icons/progress-add.svg";
 import AuthContext from "../../store/auth-context";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../utils/Firebase";
+
+// const docRef = doc(db, "cities", "SF");
+// const docSnap = await getDoc(docRef);
+
+// if (docSnap.exists()) {
+//   console.log("Document data:", docSnap.data());
+// } else {
+//   // docSnap.data() will be undefined in this case
+//   console.log("No such document!");
+// }
 
 const Todos = (props) => {
   const ctx = useContext(AuthContext);
+  const [todos, setTodos] = useState([]);
 
   const openPopupHandler = () => {
     ctx.popupHandler(true);
   };
 
+  useEffect(() => {
+    (async () => {
+      const uid = sessionStorage.getItem("uid");
+
+      const docRef = doc(db, "users", uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setTodos(docSnap.data().todos);
+        console.log("Document data:", docSnap.data());
+      } else {
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    })();
+  }, []);
+
+  const newTodoHandler = (todo) => {
+    setTodos(todo);
+  };
+
   return (
-    <section className="h-screen ">
+    <section className="h-screen relative">
+      {ctx.popup && <Popup onAddNewTodo={newTodoHandler} />}
       <Header />
       <div className="grid grid-cols-3 gap-6 h-full text-base ">
         {/* todos */}
@@ -26,7 +62,8 @@ const Todos = (props) => {
                 <p className="text-lg">To-dos</p>
               </div>
               <div className="text-base flex items-center justify-center w-5 h-5 rounded-full text-[#625F6D] bg-[#E0E0E0]">
-                3
+                {/* 3 */}
+                {todos?.length}
               </div>
             </div>
             <button
@@ -38,7 +75,15 @@ const Todos = (props) => {
           </div>
           <div className="rounded-full mt-3 mb-4 h-1 bg-blue-500 w-full"></div>
           {/* to-dos main */}
-          <TaskCard />
+          {todos?.map((todo, i) => (
+            <TaskCard
+              key={i}
+              title={todo.todo}
+              description={todo.description}
+              priority={todo.priority}
+              due_date={todo.due_date}
+            />
+          ))}
         </div>
         {/* In-progress */}
         <div className="todo-container ">
