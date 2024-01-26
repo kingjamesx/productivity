@@ -2,10 +2,38 @@ import React from "react";
 import deleteIcon from "../assets/icons/delete.svg";
 import edit from "../assets/icons/edit.svg";
 import { FormatDate } from "../hooks/FormatDate";
+import { db } from "../../utils/Firebase";
+import { doc, updateDoc } from "firebase/firestore";
+import { collection } from "firebase/firestore";
 
 const TaskCard = (props) => {
   const { year, month, date } = FormatDate(props.due_date);
   const due_date = `${month} ${date}, ${year}`;
+
+  //   const cityRef = db.collection('cities').doc('DC');
+
+  // // Set the 'capital' field of the city
+  // const res = await cityRef.update({capital: true});
+
+  const deleteHandler = async () => {
+    console.log({ ...props }, props.id);
+    let todos = props.todos;
+
+    //remove the found item from database
+    const newTodos = [...todos].filter((todo) => todo.id !== props.id);
+    console.log(newTodos);
+
+    //update database
+    const docRef = doc(db, "users", sessionStorage.getItem("uid"));
+    props.onDelete(newTodos);
+    await updateDoc(
+      docRef,
+      {
+        todos: newTodos,
+      },
+      { merge: true }
+    );
+  };
 
   return (
     <div className="bg-white rounded-lg p-4 mb-4">
@@ -21,7 +49,12 @@ const TaskCard = (props) => {
           {/* High */}
           {props.priority}
         </div>
-        <img src={deleteIcon} alt="Delete icon" className="cursor-pointer" />
+        <img
+          onClick={deleteHandler}
+          src={deleteIcon}
+          alt="Delete icon"
+          className="cursor-pointer"
+        />
       </div>
       {/* content */}
       <div className="">

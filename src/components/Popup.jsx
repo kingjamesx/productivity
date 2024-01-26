@@ -6,7 +6,6 @@ import AuthContext from "../../store/auth-context";
 import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-// import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../utils/Firebase";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 
@@ -20,6 +19,7 @@ const Popup = (props) => {
     dueDate: "",
     dueTime: "",
     priority: "",
+    // id: Date()
   });
 
   //yup schema
@@ -45,6 +45,7 @@ const Popup = (props) => {
   };
 
   const submitHandler = async (data) => {
+    data = { ...data, id: Date() };
     try {
       console.log(data, errors);
       if (data) ctx.popupHandler(false);
@@ -52,7 +53,7 @@ const Popup = (props) => {
       //   const docRef = await addDoc(collection(db, "users"), {todos:[data]});
       const uid = sessionStorage.getItem("uid");
       const docRef = doc(db, "users", uid);
-    //   await setDoc(docRef, { todos: [] });
+      //   await setDoc(docRef, { todos: [] });
       console.log(docRef.id, docRef);
       //   setDoc(cityRef, { capital: true }, { merge: true })
       await updateDoc(
@@ -64,12 +65,12 @@ const Popup = (props) => {
       );
 
       //get all todos
-    //   const docRef = doc(db, "users", uid);
+      //   const docRef = doc(db, "users", uid);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         console.log(docSnap.data().todos);
-        props.onAddNewTodo(docSnap.data().todos)
+        props.onAddNewTodo(docSnap.data().todos);
         console.log("Document data:", docSnap.data());
       } else {
         // docSnap.data() will be undefined in this case

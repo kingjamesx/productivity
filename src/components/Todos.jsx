@@ -8,16 +8,6 @@ import AuthContext from "../../store/auth-context";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../utils/Firebase";
 
-// const docRef = doc(db, "cities", "SF");
-// const docSnap = await getDoc(docRef);
-
-// if (docSnap.exists()) {
-//   console.log("Document data:", docSnap.data());
-// } else {
-//   // docSnap.data() will be undefined in this case
-//   console.log("No such document!");
-// }
-
 const Todos = (props) => {
   const ctx = useContext(AuthContext);
   const [todos, setTodos] = useState([]);
@@ -45,6 +35,10 @@ const Todos = (props) => {
 
   const newTodoHandler = (todo) => {
     setTodos(todo);
+  };
+
+  const deleteTodoHandler = (todos) => {
+    setTodos(todos);
   };
 
   return (
@@ -77,11 +71,14 @@ const Todos = (props) => {
           {/* to-dos main */}
           {todos?.map((todo, i) => (
             <TaskCard
-              key={i}
+              todos={todos}
+              key={todo.id}
+              id={todo.id}
               title={todo.todo}
               description={todo.description}
               priority={todo.priority}
               due_date={todo.due_date}
+              onDelete={deleteTodoHandler}
             />
           ))}
         </div>
