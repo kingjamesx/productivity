@@ -12,22 +12,14 @@ import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 const Popup = (props) => {
   const navigate = useNavigate();
   const ctx = useContext(AuthContext);
-  const [todoValid, setTodoValid] = useState(false);
-  const [todoData, setTodoData] = useState({
-    todo: "",
-    description: "",
-    dueDate: "",
-    dueTime: "",
-    priority: "",
-    // id: Date()
-  });
+  //   const [todoValid, setTodoValid] = useState(false);
 
   //yup schema
   let userSchema = object({
     todo: string().required("To-do is required"),
     description: string().required("Description is required"),
     due_date: string().required("To-do is required"),
-    due_time: string().required("To-do is required"),
+    // due_time: string().required("To-do is required"),
     priority: string(),
   });
 
@@ -38,43 +30,77 @@ const Popup = (props) => {
     reset,
     watch,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(userSchema) });
+  } = useForm({
+    resolver: yupResolver(userSchema),
+    defaultValues: {
+      todo: props?.todo?.todo,
+      description: props?.todo?.description,
+      due_date: props?.todo?.due_date,
+      // dueTime: "",
+      priority: props?.todo?.priority,
+      // id: Date()
+    },
+  });
 
   const closePopupHandler = () => {
     ctx.popupHandler(false);
+    ctx.editHandler(false);
   };
 
   const submitHandler = async (data) => {
-    data = { ...data, id: Date() };
+    ctx.edit
+      ? (data = { ...data, id: props.todo.id })
+      : (data = { ...data, id: Date() });
+
+    const uid = sessionStorage.getItem("uid");
+    const docRef = doc(db, "users", uid);
+
     try {
-      console.log(data, errors);
-      if (data) ctx.popupHandler(false);
+      if (!ctx.edit) {
+        console.log(data, errors);
+        if (data) ctx.popupHandler(false);
+        console.log(docRef.id, docRef);
 
-      //   const docRef = await addDoc(collection(db, "users"), {todos:[data]});
-      const uid = sessionStorage.getItem("uid");
-      const docRef = doc(db, "users", uid);
-      //   await setDoc(docRef, { todos: [] });
-      console.log(docRef.id, docRef);
-      //   setDoc(cityRef, { capital: true }, { merge: true })
-      await updateDoc(
-        docRef,
-        {
-          todos: arrayUnion(data),
-        },
-        { merge: true }
-      );
+        await updateDoc(
+          docRef,
+          {
+            todos: arrayUnion(data),
+          },
+          { merge: true }
+        );
 
-      //get all todos
-      //   const docRef = doc(db, "users", uid);
-      const docSnap = await getDoc(docRef);
+        //get all todos
+        const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        console.log(docSnap.data().todos);
-        props.onAddNewTodo(docSnap.data().todos);
-        console.log("Document data:", docSnap.data());
+        if (docSnap.exists()) {
+          console.log(docSnap.data().todos);
+          props.onAddNewTodo(docSnap.data().todos);
+          console.log("Document data:", docSnap.data());
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log("No such document!");
+        }
       } else {
-        // docSnap.data() will be undefined in this case
-        console.log("No such document!");
+        ctx.editHandler(false);
+
+        let todos = props.todos;
+
+        //find index of edited todo by comparing that id of unedited and edited todo are the same
+        const editedTodoIndex = todos.findIndex((todo) => todo.id === data.id);
+        console.log(editedTodoIndex);
+        //Replace the old todo with the new one
+        todos.splice(editedTodoIndex, 1, data);
+
+        //update database
+        await updateDoc(
+          docRef,
+          {
+            todos: todos,
+          },
+          { merge: true }
+        );
+        // props.onEdit({ todos: newTodos });
+        console.log(data);
       }
     } catch (err) {
       console.log(err);
@@ -106,11 +132,13 @@ const Popup = (props) => {
             To-do
           </label>
           <input
+            // onChange={todoHandler}
             {...register("todo")}
             id="todo"
             type="text"
             placeholder="Read a book"
             className="p-2 h-8.5 outline-none border rounded-md"
+            // value={todoData.todo}
           />
         </div>
 
@@ -119,28 +147,33 @@ const Popup = (props) => {
             Description
           </label>
           <input
+            // onChange={descriptionHandler}
             {...register("description")}
             id="description"
             type="text"
             placeholder="Read a book"
             className="p-2 h-8.5 outline-none border rounded-md"
+            // value={todoData.description}
           />
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        {/* <div className="mt-4 grid grid-cols-2 gap-4"> */}
+        <div className="mt-4">
           <div className="flex flex-col w-auto">
             <label htmlFor="date" className="mb-1">
               Due Date
             </label>
             <input
+              //   onChange={dueDateHandler}
               {...register("due_date")}
               id="date"
               type="date"
               //   placeholder="2017-06-01"
               className="p-2 h-8.5 outline-none border rounded-md"
+              //   value={todoData.due_date}
             />
           </div>
-          <div className="flex flex-col w-auto">
+          {/* <div className="flex flex-col w-auto">
             <label htmlFor="time" className="mb-1">
               Due time
             </label>
@@ -152,7 +185,7 @@ const Popup = (props) => {
               placeholder="00:00"
               className="p-2 h-8.5 outline-none border rounded-md"
             />
-          </div>
+          </div> */}
         </div>
 
         <div className="mt-4 flex flex-col w-[400px]">
@@ -160,11 +193,13 @@ const Popup = (props) => {
             Priority
           </label>
           <select
+            // onChange={priorityHandler}
             {...register("priority")}
             id="priority"
             type="text"
             placeholder="Read a book"
             className="p-2 h-8.5 outline-none border rounded-md"
+            // value={todoData.priority}
           >
             <option>High</option>
             <option>Low</option>

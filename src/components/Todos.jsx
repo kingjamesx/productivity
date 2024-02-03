@@ -11,6 +11,7 @@ import { db } from "../../utils/Firebase";
 const Todos = (props) => {
   const ctx = useContext(AuthContext);
   const [todos, setTodos] = useState([]);
+  const [todoEdit, setTodoEdit] = useState({});
 
   const openPopupHandler = () => {
     ctx.popupHandler(true);
@@ -25,7 +26,7 @@ const Todos = (props) => {
 
       if (docSnap.exists()) {
         setTodos(docSnap.data().todos);
-        console.log("Document data:", docSnap.data());
+        // console.log("Document data:", docSnap.data());
       } else {
         // docSnap.data() will be undefined in this case
         console.log("No such document!");
@@ -34,6 +35,7 @@ const Todos = (props) => {
   }, []);
 
   const newTodoHandler = (todo) => {
+    // ctx.editHandler(false)
     setTodos(todo);
   };
 
@@ -41,9 +43,25 @@ const Todos = (props) => {
     setTodos(todos);
   };
 
+  const editTodoHandler = (todo) => {
+    setTodoEdit(todo);
+    // setTodos(todos)
+    // console.log(todo);
+  };
+
   return (
     <section className="h-screen relative">
-      {ctx.popup && <Popup onAddNewTodo={newTodoHandler} />}
+      {ctx.popup && (
+        <Popup onEdit={editTodoHandler} onAddNewTodo={newTodoHandler} />
+      )}
+      {ctx.edit && (
+        <Popup
+          todos={todos}
+          todo={todoEdit}
+          onEdit={editTodoHandler}
+          onAddNewTodo={newTodoHandler}
+        />
+      )}
       <Header />
       <div className="grid grid-cols-3 gap-6 h-full text-base ">
         {/* todos */}
@@ -71,14 +89,19 @@ const Todos = (props) => {
           {/* to-dos main */}
           {todos?.map((todo, i) => (
             <TaskCard
-              todos={todos}
               key={todo.id}
+              todo={todo}
+              todos={todos}
               id={todo.id}
               title={todo.todo}
               description={todo.description}
               priority={todo.priority}
               due_date={todo.due_date}
               onDelete={deleteTodoHandler}
+              onEdit={editTodoHandler}
+              //   onEdit={() => {
+              //     return todos[i];
+              //   }}
             />
           ))}
         </div>

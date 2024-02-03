@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useCallback, useContext } from "react";
 import deleteIcon from "../assets/icons/delete.svg";
 import edit from "../assets/icons/edit.svg";
 import { FormatDate } from "../hooks/FormatDate";
 import { db } from "../../utils/Firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { collection } from "firebase/firestore";
+import AuthContext from "../../store/auth-context";
+import Popup from "./Popup";
 
 const TaskCard = (props) => {
   const { year, month, date } = FormatDate(props.due_date);
   const due_date = `${month} ${date}, ${year}`;
+
+  const ctx = useContext(AuthContext);
+
+  //   const todo = props.onEdit();
+  //   console.log(todo)
 
   //   const cityRef = db.collection('cities').doc('DC');
 
@@ -21,7 +28,7 @@ const TaskCard = (props) => {
 
     //remove the found item from database
     const newTodos = [...todos].filter((todo) => todo.id !== props.id);
-    console.log(newTodos);
+    // console.log(newTodos);
 
     //update database
     const docRef = doc(db, "users", sessionStorage.getItem("uid"));
@@ -35,8 +42,20 @@ const TaskCard = (props) => {
     );
   };
 
+  const editTodoHandler = () => {
+    //Show popup
+    ctx.editHandler(true);
+
+    props.onEdit(props.todo);
+    ///////////Steps///////////
+    //get id of the clicked todo
+    //set form value to the data of the todo to be edited
+    //on submit the new todo should replace the todo in that particular position/index
+  };
+
   return (
     <div className="bg-white rounded-lg p-4 mb-4">
+      {/* {ctx.edit && <Popup  />} */}
       <div className="flex items-center justify-between pb-4">
         <div
           className={
@@ -76,7 +95,12 @@ const TaskCard = (props) => {
             {due_date}
           </span>
         </p>
-        <img src={edit} alt="edit icon" className="cursor-pointer" />
+        <img
+          onClick={editTodoHandler}
+          src={edit}
+          alt="edit icon"
+          className="cursor-pointer"
+        />
       </div>
     </div>
   );
