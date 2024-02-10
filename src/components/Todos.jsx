@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import Header from "./Header";
 import TaskCard from "./TaskCard";
+import TaskDoneCard from "./TaskDoneCard";
 import Popup from "./Popup";
 import addTodo from "../assets/icons/todo-add.svg";
 import addProgress from "../assets/icons/progress-add.svg";
@@ -11,11 +12,9 @@ import { db } from "../../utils/Firebase";
 const Todos = (props) => {
   const ctx = useContext(AuthContext);
   const [todos, setTodos] = useState([]);
-  const [todoEdit, setTodoEdit] = useState({});
+  const [completedTodos, setCompletedTodos] = useState([]);
 
-  const openPopupHandler = () => {
-    ctx.popupHandler(true);
-  };
+  const [todoEdit, setTodoEdit] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -25,14 +24,22 @@ const Todos = (props) => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setTodos(docSnap.data().todos);
-        // console.log("Document data:", docSnap.data());
+        //Fetch tasks
+        setTodos(() => docSnap.data().todos);
+
+        //Fetch completed tasks
+        setCompletedTodos(docSnap.data().completeTodos);
+        console.log(docSnap.data().completeTodos);
       } else {
         // docSnap.data() will be undefined in this case
         console.log("No such document!");
       }
     })();
   }, []);
+
+  const openPopupHandler = () => {
+    ctx.popupHandler(true);
+  };
 
   const newTodoHandler = (todo) => {
     // ctx.editHandler(false)
@@ -47,6 +54,11 @@ const Todos = (props) => {
     setTodoEdit(todo);
     // setTodos(todos)
     // console.log(todo);
+  };
+
+  const completeTodoHandler = (todos, completedTodo) => {
+    setTodos(todos);
+    setCompletedTodos((prev) => [...prev, completedTodo]);
   };
 
   return (
@@ -99,9 +111,7 @@ const Todos = (props) => {
               due_date={todo.due_date}
               onDelete={deleteTodoHandler}
               onEdit={editTodoHandler}
-              //   onEdit={() => {
-              //     return todos[i];
-              //   }}
+              onComplete={completeTodoHandler}
             />
           ))}
         </div>
@@ -136,12 +146,15 @@ const Todos = (props) => {
                 <p className="text-lg">Done</p>
               </div>
               <div className="text-base flex items-center justify-center w-5 h-5 rounded-full text-[#625F6D] bg-[#E0E0E0]">
-                3
+                {completedTodos.length}
               </div>
             </div>
             {/* <button className="w-6 h-6 rounded-md bg-slate-300"></button> */}
           </div>
-          <div className="rounded-full mt-3 h-1 bg-[#8BC48A] w-full"></div>
+          <div className="rounded-full mt-3 mb-4 h-1 bg-[#8BC48A] w-full"></div>
+          {completedTodos?.map((todo) => (
+            <TaskDoneCard key={todo.id} todo={todo} />
+          ))}
         </div>
       </div>
     </section>

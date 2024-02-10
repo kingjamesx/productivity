@@ -49,8 +49,8 @@ const Popup = (props) => {
 
   const submitHandler = async (data) => {
     ctx.edit
-      ? (data = { ...data, id: props.todo.id })
-      : (data = { ...data, id: Date() });
+      ? (data = { ...data, id: props.todo.id})
+      : (data = { ...data, id: Date(), done: false  });
 
     const uid = sessionStorage.getItem("uid");
     const docRef = doc(db, "users", uid);

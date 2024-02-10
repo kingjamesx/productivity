@@ -3,7 +3,7 @@ import deleteIcon from "../assets/icons/delete.svg";
 import edit from "../assets/icons/edit.svg";
 import { FormatDate } from "../hooks/FormatDate";
 import { db } from "../../utils/Firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 import AuthContext from "../../store/auth-context";
 import Popup from "./Popup";
@@ -13,14 +13,7 @@ const TaskCard = (props) => {
   const due_date = `${month} ${date}, ${year}`;
 
   const ctx = useContext(AuthContext);
-
-  //   const todo = props.onEdit();
-  //   console.log(todo)
-
-  //   const cityRef = db.collection('cities').doc('DC');
-
-  // // Set the 'capital' field of the city
-  // const res = await cityRef.update({capital: true});
+  const docRef = doc(db, "users", sessionStorage.getItem("uid"));
 
   const deleteHandler = async () => {
     console.log({ ...props }, props.id);
@@ -31,7 +24,6 @@ const TaskCard = (props) => {
     // console.log(newTodos);
 
     //update database
-    const docRef = doc(db, "users", sessionStorage.getItem("uid"));
     props.onDelete(newTodos);
     await updateDoc(
       docRef,
@@ -47,19 +39,63 @@ const TaskCard = (props) => {
     ctx.editHandler(true);
 
     props.onEdit(props.todo);
-    ///////////Steps///////////
-    //get id of the clicked todo
-    //set form value to the data of the todo to be edited
-    //on submit the new todo should replace the todo in that particular position/index
+  };
+
+  const completeTodoHandler = async () => {
+    // get the id of the card and update it
+    let todos = props.todos;
+
+    //find index of todo
+    const completedTodoIndex = todos.findIndex((todo) => todo.id === props.id);
+
+    todos[completedTodoIndex] = {
+      ...todos[completedTodoIndex],
+      done: true,
+    };
+
+    // let newTodos = todos;
+    // console.log(props.id, completedTodoIndex, todos);
+    
+    //Remove completed todos from todos
+    let newTodos = todos.filter((todo, i) => i !== completedTodoIndex);
+    // console.log(newTodos);
+    const completedTodo = {...todos[completedTodoIndex], date_done: new Date()}
+    //Update data on clientside
+    props.onComplete(newTodos, completedTodo);
+    // console.log(todos);
+    try {
+      await updateDoc(
+        docRef,
+        {
+          todos: newTodos,
+        },
+        { merge: true }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      
+      //update completed todos
+    try {
+      await updateDoc(
+        docRef,
+        {
+          completeTodos: arrayUnion(completedTodo),
+        },
+        { merge: true }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <div className="bg-white rounded-lg p-4 mb-4">
+    <div className="group bg-white rounded-lg p-4 mb-4">
       {/* {ctx.edit && <Popup  />} */}
       <div className="flex items-center justify-between pb-4">
         <div
           className={
-            "rounded-[4px] px-1.5 py-1 bg-opacity-15 " +
+            "rounded-[4px] text-sm px-1.5 py-1 bg-opacity-15 " +
             (props.priority.toLowerCase() === "high"
               ? "text-[#D8727D] bg-[#D8727D]"
               : "text-[#D58D49] bg-[#DFA87433]")
@@ -76,15 +112,25 @@ const TaskCard = (props) => {
         />
       </div>
       {/* content */}
-      <div className="">
-        <h3 className="text-lg pb-3 font-bold">
-          {/* Brainstorming */}
-          {props.title}
-        </h3>
-        <p className="text-[#787486]">
-          {/* Brainstorming brings team members' diverse experience into play.{" "} */}
-          {props.description}
-        </p>
+      <div className="flex justify-between items-center">
+        <div className="">
+          <h3 className=" pb-3 font-bold">
+            {/* Brainstorming */}
+            {props.title}
+          </h3>
+          <p className="text-[#787486]">
+            {/* Brainstorming brings team members' diverse experience into play.{" "} */}
+            {props.description}
+          </p>
+        </div>
+        <div className="">
+          <input
+            onClick={completeTodoHandler}
+            type="checkbox"
+            className="w-[15px] h-[15px]"
+          />
+          {/* <input type="checkbox" className="w-[15px] h-[15px] invisible group-hover:visible " /> */}
+        </div>
       </div>
 
       <div className="flex items-center justify-between mt-5">
