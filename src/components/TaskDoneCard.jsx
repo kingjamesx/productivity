@@ -8,7 +8,6 @@ const TaskDoneCard = (props) => {
   const shortenDescription = (text) => {
     if (text.length > 24) {
       return text.slice(0, 24) + "....";
-      // console.log(text.slice(0, 22) + '....')
     } else {
       return text;
     }

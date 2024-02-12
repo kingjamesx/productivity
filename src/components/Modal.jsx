@@ -6,6 +6,7 @@ const Modal = (props) => {
 
   const closeModalHandler = () => {
     ctx.popupHandler(false);
+    ctx.inProgressHandler(false)
   };
 //   top-0 left-0  z-[1000]
   return (

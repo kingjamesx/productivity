@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
 import close from "../assets/icons/close.svg";
 import Modal from "./Modal";
 import AuthContext from "../../store/auth-context";
@@ -7,19 +6,16 @@ import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { db } from "../../utils/Firebase";
-import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 
 const Popup = (props) => {
-  const navigate = useNavigate();
   const ctx = useContext(AuthContext);
-  //   const [todoValid, setTodoValid] = useState(false);
 
   //yup schema
   let userSchema = object({
     todo: string().required("To-do is required"),
     description: string().required("Description is required"),
-    due_date: string().required("To-do is required"),
-    // due_time: string().required("To-do is required"),
+    due_date: string().required("Due date is required"),
     priority: string(),
   });
 
@@ -36,21 +32,25 @@ const Popup = (props) => {
       todo: props?.todo?.todo,
       description: props?.todo?.description,
       due_date: props?.todo?.due_date,
-      // dueTime: "",
       priority: props?.todo?.priority,
-      // id: Date()
     },
   });
 
   const closePopupHandler = () => {
     ctx.popupHandler(false);
     ctx.editHandler(false);
+    ctx.inProgressHandler(false)
   };
 
   const submitHandler = async (data) => {
     ctx.edit
-      ? (data = { ...data, id: props.todo.id})
-      : (data = { ...data, id: Date(), done: false  });
+      ? (data = { ...data, id: props.todo.id })
+      : (data = {
+          ...data,
+          id: Date(),
+          done: false,
+          tag: ctx.inProgress ? "inProgress" : "todo",
+        });
 
     const uid = sessionStorage.getItem("uid");
     const docRef = doc(db, "users", uid);
@@ -58,28 +58,48 @@ const Popup = (props) => {
     try {
       if (!ctx.edit) {
         console.log(data, errors);
-        if (data) ctx.popupHandler(false);
-        console.log(docRef.id, docRef);
 
-        await updateDoc(
-          docRef,
-          {
-            todos: arrayUnion(data),
-          },
-          { merge: true }
-        );
+        if (data && ctx.popup && !ctx.inProgress) {
+          ctx.popupHandler(false);
 
-        //get all todos
-        const docSnap = await getDoc(docRef);
+          await updateDoc(
+            docRef,
+            {
+              todos: arrayUnion(data),
+            },
+            { merge: true }
+          );
 
-        if (docSnap.exists()) {
-          console.log(docSnap.data().todos);
-          props.onAddNewTodo(docSnap.data().todos);
-          console.log("Document data:", docSnap.data());
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log("No such document!");
+          //get all todos
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            console.log(docSnap.data().todos);
+            props.onAddNewTodo(docSnap.data().todos);
+            // console.log("Document data:", docSnap.data());
+          } else {
+            console.log("No such document!");
+          }
+        } else if (data && ctx.inProgress && !ctx.popup) {
+          console.log("inProgresssssssss", data);
+          ctx.inProgressHandler(false);
+
+          props.onAddTodoInProgress((prev) => [...prev, data]);
+
+          //update todos in-progress
+          try {
+            await updateDoc(
+              docRef,
+              {
+                todosInProgress: arrayUnion(data),
+              },
+              { merge: true }
+            );
+          } catch (error) {
+            console.log(error);
+          }
         }
+        console.log(docRef.id, docRef);
       } else {
         ctx.editHandler(false);
 
@@ -87,7 +107,7 @@ const Popup = (props) => {
 
         //find index of edited todo by comparing that id of unedited and edited todo are the same
         const editedTodoIndex = todos.findIndex((todo) => todo.id === data.id);
-        console.log(editedTodoIndex);
+
         //Replace the old todo with the new one
         todos.splice(editedTodoIndex, 1, data);
 
@@ -99,8 +119,6 @@ const Popup = (props) => {
           },
           { merge: true }
         );
-        // props.onEdit({ todos: newTodos });
-        console.log(data);
       }
     } catch (err) {
       console.log(err);
@@ -108,10 +126,7 @@ const Popup = (props) => {
   };
 
   return (
-    <div
-      //   onClick={closePopupHandler}
-      className="absolute z-[10000] flex justify-center items-center h-screen mt-[-28px] ml-[calc(16.67%+32px)] "
-    >
+    <div className="absolute z-[10000] flex justify-center items-center h-screen mt-[-28px] ml-[calc(16.67%+32px)] ">
       <Modal onClose={closePopupHandler}></Modal>
       <form
         onSubmit={handleSubmit(submitHandler)}
@@ -132,13 +147,11 @@ const Popup = (props) => {
             To-do
           </label>
           <input
-            // onChange={todoHandler}
             {...register("todo")}
             id="todo"
             type="text"
             placeholder="Read a book"
             className="p-2 h-8.5 outline-none border rounded-md"
-            // value={todoData.todo}
           />
         </div>
 
@@ -147,13 +160,11 @@ const Popup = (props) => {
             Description
           </label>
           <input
-            // onChange={descriptionHandler}
             {...register("description")}
             id="description"
             type="text"
             placeholder="Read a book"
             className="p-2 h-8.5 outline-none border rounded-md"
-            // value={todoData.description}
           />
         </div>
 
@@ -164,13 +175,11 @@ const Popup = (props) => {
               Due Date
             </label>
             <input
-              //   onChange={dueDateHandler}
               {...register("due_date")}
               id="date"
               type="date"
               //   placeholder="2017-06-01"
               className="p-2 h-8.5 outline-none border rounded-md"
-              //   value={todoData.due_date}
             />
           </div>
           {/* <div className="flex flex-col w-auto">
@@ -193,13 +202,11 @@ const Popup = (props) => {
             Priority
           </label>
           <select
-            // onChange={priorityHandler}
             {...register("priority")}
             id="priority"
             type="text"
             placeholder="Read a book"
             className="p-2 h-8.5 outline-none border rounded-md"
-            // value={todoData.priority}
           >
             <option>High</option>
             <option>Low</option>

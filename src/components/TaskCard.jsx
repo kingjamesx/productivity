@@ -1,10 +1,9 @@
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import deleteIcon from "../assets/icons/delete.svg";
 import edit from "../assets/icons/edit.svg";
 import { FormatDate } from "../hooks/FormatDate";
 import { db } from "../../utils/Firebase";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-import { collection } from "firebase/firestore";
 import AuthContext from "../../store/auth-context";
 import Popup from "./Popup";
 
@@ -21,17 +20,28 @@ const TaskCard = (props) => {
 
     //remove the found item from database
     const newTodos = [...todos].filter((todo) => todo.id !== props.id);
-    // console.log(newTodos);
 
     //update database
-    props.onDelete(newTodos);
-    await updateDoc(
-      docRef,
-      {
-        todos: newTodos,
-      },
-      { merge: true }
-    );
+    const tag = props.todo.tag;
+    props.onDelete(newTodos, tag === "inProgress");
+
+    if (tag !== "inProgress") {
+      await updateDoc(
+        docRef,
+        {
+          todos: newTodos,
+        },
+        { merge: true }
+      );
+    } else {
+      await updateDoc(
+        docRef,
+        {
+          todosInProgress: newTodos,
+        },
+        { merge: true }
+      );
+    }
   };
 
   const editTodoHandler = () => {
@@ -53,29 +63,39 @@ const TaskCard = (props) => {
       done: true,
     };
 
-    // let newTodos = todos;
-    // console.log(props.id, completedTodoIndex, todos);
-    
     //Remove completed todos from todos
     let newTodos = todos.filter((todo, i) => i !== completedTodoIndex);
-    // console.log(newTodos);
-    const completedTodo = {...todos[completedTodoIndex], date_done: new Date()}
+    const completedTodo = {
+      ...todos[completedTodoIndex],
+      date_done: new Date(),
+    };
+
     //Update data on clientside
-    props.onComplete(newTodos, completedTodo);
-    // console.log(todos);
+    const tag = props.todo.tag;
+    props.onComplete(newTodos, completedTodo, tag === "inProgress");
     try {
-      await updateDoc(
-        docRef,
-        {
-          todos: newTodos,
-        },
-        { merge: true }
+      if (tag !== "inProgress") {
+        await updateDoc(
+          docRef,
+          {
+            todos: newTodos,
+          },
+          { merge: true }
         );
-      } catch (error) {
-        console.log(error);
+      }else{
+        await updateDoc(
+          docRef,
+          {
+            todosInProgress: newTodos,
+          },
+          { merge: true }
+        );
       }
-      
-      //update completed todos
+    } catch (error) {
+      console.log(error);
+    }
+
+    //update completed todos
     try {
       await updateDoc(
         docRef,
@@ -96,13 +116,13 @@ const TaskCard = (props) => {
         <div
           className={
             "rounded-[4px] text-sm px-1.5 py-1 bg-opacity-15 " +
-            (props.priority.toLowerCase() === "high"
+            (props.todo?.priority?.toLowerCase() === "high"
               ? "text-[#D8727D] bg-[#D8727D]"
               : "text-[#D58D49] bg-[#DFA87433]")
           }
         >
           {/* High */}
-          {props.priority}
+          {props.todo?.priority}
         </div>
         <img
           onClick={deleteHandler}
@@ -116,11 +136,11 @@ const TaskCard = (props) => {
         <div className="">
           <h3 className=" pb-3 font-bold">
             {/* Brainstorming */}
-            {props.title}
+            {props.todo?.todo}
           </h3>
           <p className="text-[#787486]">
             {/* Brainstorming brings team members' diverse experience into play.{" "} */}
-            {props.description}
+            {props.todo?.description}
           </p>
         </div>
         <div className="">
