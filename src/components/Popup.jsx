@@ -64,6 +64,8 @@ const Popup = (props) => {
           ctx.popupHandler(false);
 
           if (props.type === "goal") {
+            //Update client data
+            props.onAddNewGoal((prev) => [...prev, data]);
             await updateDoc(
               docRef,
               {

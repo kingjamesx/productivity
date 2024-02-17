@@ -26,7 +26,7 @@ const TaskCard = (props) => {
     props.onDelete(newTodos, tag === "inProgress");
 
     if (tag !== "inProgress") {
-      if(props.type === 'goal'){
+      if (props.type === "goal") {
         // props.onDelete()
         await updateDoc(
           docRef,
@@ -35,7 +35,7 @@ const TaskCard = (props) => {
           },
           { merge: true }
         );
-      }else{
+      } else {
         await updateDoc(
           docRef,
           {
@@ -43,7 +43,6 @@ const TaskCard = (props) => {
           },
           { merge: true }
         );
-
       }
     } else {
       await updateDoc(
@@ -85,16 +84,27 @@ const TaskCard = (props) => {
     //Update data on clientside
     const tag = props.todo.tag;
     props.onComplete(newTodos, completedTodo, tag === "inProgress");
+
     try {
       if (tag !== "inProgress") {
-        await updateDoc(
-          docRef,
-          {
-            todos: newTodos,
-          },
-          { merge: true }
-        );
-      }else{
+        if (props.type === "goal") {
+          await updateDoc(
+            docRef,
+            {
+              goals: newTodos,
+            },
+            { merge: true }
+          );
+        } else {
+          await updateDoc(
+            docRef,
+            {
+              todos: newTodos,
+            },
+            { merge: true }
+          );
+        }
+      } else {
         await updateDoc(
           docRef,
           {
@@ -109,13 +119,23 @@ const TaskCard = (props) => {
 
     //update completed todos
     try {
-      await updateDoc(
-        docRef,
-        {
-          completeTodos: arrayUnion(completedTodo),
-        },
-        { merge: true }
-      );
+      if (props.type === "goal") {
+        await updateDoc(
+          docRef,
+          {
+            completedGoals: arrayUnion(completedTodo),
+          },
+          { merge: true }
+        );
+      }else{
+        await updateDoc(
+          docRef,
+          {
+            completeTodos: arrayUnion(completedTodo),
+          },
+          { merge: true }
+        );
+      }
     } catch (error) {
       console.log(error);
     }

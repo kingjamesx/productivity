@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import Header from "./Header";
 import TaskCard from "./TaskCard";
+import TaskDoneCard from "./TaskDoneCard";
 import Popup from "./Popup";
 import addTodo from "../assets/icons/todo-add.svg";
 import addProgress from "../assets/icons/progress-add.svg";
@@ -12,6 +13,7 @@ import { get } from "react-hook-form";
 const Goals = () => {
   const ctx = useContext(AuthContext);
   const [goals, setGoals] = useState([]);
+  const [completedGoals, setCompletedGoals] = useState([]);
 
   //fetch goals
   useEffect(() => {
@@ -21,8 +23,16 @@ const Goals = () => {
       const docRef = doc(db, "users", uid);
       const docSnap = await getDoc(docRef);
 
+      //fetch goals
       if (docSnap.exists()) {
         setGoals(docSnap.data().goals);
+      } else {
+        return console.log("No such document!");
+      }
+
+      //fetch completed goals
+      if (docSnap.exists()) {
+        setCompletedGoals(docSnap.data().completedGoals);
       } else {
         return console.log("No such document!");
       }
@@ -33,13 +43,20 @@ const Goals = () => {
     ctx.popupHandler(true);
   };
 
-  const goalDeleteHandler = (goals, inProgress = false) => {
+  const newGoalHandler = (goals) => {
+    setGoals(goals);
+  };
+
+  const deleteGoalHandler = (goals, inProgress = false) => {
+    setGoals(goals);
+  };
+  const completeGoalHandler = (goals, inProgress = false) => {
     setGoals(goals);
   };
 
   return (
     <section className="h-screen relative">
-      {ctx.popup && <Popup type="goal" />}
+      {ctx.popup && <Popup onAddNewGoal={newGoalHandler} type="goal" />}
 
       <Header />
 
@@ -70,7 +87,8 @@ const Goals = () => {
               id={goal.id}
               todo={goal}
               todos={goals}
-              onDelete={goalDeleteHandler}
+              onDelete={deleteGoalHandler}
+              onComplete={completeGoalHandler}
             />
           ))}
         </div>
@@ -116,7 +134,9 @@ const Goals = () => {
           </div>
           <div className="done-header-border"></div>
 
-          <TaskCard />
+          {completedGoals.map((goal) => (
+            <TaskDoneCard key={goal.id} todo={goal} />
+          ))}
         </div>
       </div>
     </section>
