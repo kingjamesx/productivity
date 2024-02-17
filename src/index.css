@@ -6,9 +6,50 @@
   @apply bg-[#EEF2F5] rounded-[10px] w-auto p-3;
 }
 
+.todo-big-container {
+  @apply grid grid-cols-3 gap-6 h-full text-base;
+}
+
+.task-container-header {
+  @apply flex items-center justify-between px-2;
+}
+
+.task-container-header-right {
+  @apply flex items-center gap-5;
+}
+
+.circle-small {
+  @apply w-2.5 h-2.5 rounded-full;
+}
+
+.total-task {
+  @apply text-base flex items-center justify-center w-5 h-5 rounded-full text-[#625F6D] bg-[#E0E0E0];
+}
+
+.add-task {
+  @apply flex items-center justify-center w-6 h-6 rounded-md bg-blue-500 bg-opacity-15;
+}
+
+.add-inprogress {
+  @apply flex items-center justify-center w-6 h-6 rounded-md bg-opacity-15 bg-[#FFA500];
+}
+
+.task-header-border {
+  @apply rounded-full mt-3 mb-4 h-1 bg-blue-500 w-full;
+}
+
+.inprogress-header-border {
+  @apply rounded-full mt-3 mb-4 h-1 bg-[#FFA500] w-full;
+}
+
+.done-header-border {
+  @apply rounded-full mt-3 mb-4 h-1 bg-[#8BC48A] w-full;
+}
+
 .nav-active {
   @apply pl-11 bg-[#4391ED1A] bg-opacity-[10%] py-2.5;
 }
-.nav{
-  @apply pl-11
+
+.nav {
+  @apply pl-11;
 }

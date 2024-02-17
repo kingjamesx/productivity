@@ -39,7 +39,7 @@ const Popup = (props) => {
   const closePopupHandler = () => {
     ctx.popupHandler(false);
     ctx.editHandler(false);
-    ctx.inProgressHandler(false)
+    ctx.inProgressHandler(false);
   };
 
   const submitHandler = async (data) => {
@@ -55,6 +55,7 @@ const Popup = (props) => {
     const uid = sessionStorage.getItem("uid");
     const docRef = doc(db, "users", uid);
 
+    //update database
     try {
       if (!ctx.edit) {
         console.log(data, errors);
@@ -62,24 +63,37 @@ const Popup = (props) => {
         if (data && ctx.popup && !ctx.inProgress) {
           ctx.popupHandler(false);
 
-          await updateDoc(
-            docRef,
-            {
-              todos: arrayUnion(data),
-            },
-            { merge: true }
-          );
+          if (props.type === "goal") {
+            await updateDoc(
+              docRef,
+              {
+                goals: arrayUnion(data),
+              },
+              { merge: true }
+            );
+          } else {
+            //Update client data
+            props.onAddNewTodo((prev) => [...prev, data]);
+            
+            await updateDoc(
+              docRef,
+              {
+                todos: arrayUnion(data),
+              },
+              { merge: true }
+            );
+          }
 
           //get all todos
-          const docSnap = await getDoc(docRef);
+          // const docSnap = await getDoc(docRef);
 
-          if (docSnap.exists()) {
-            console.log(docSnap.data().todos);
-            props.onAddNewTodo(docSnap.data().todos);
-            // console.log("Document data:", docSnap.data());
-          } else {
-            console.log("No such document!");
-          }
+          // if (docSnap.exists()) {
+          //   console.log(docSnap.data().todos);
+          //   props.onAddNewTodo(docSnap.data().todos);
+          //   // console.log("Document data:", docSnap.data());
+          // } else {
+          //   console.log("No such document!");
+          // }
         } else if (data && ctx.inProgress && !ctx.popup) {
           console.log("inProgresssssssss", data);
           ctx.inProgressHandler(false);

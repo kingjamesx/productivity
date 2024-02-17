@@ -26,13 +26,25 @@ const TaskCard = (props) => {
     props.onDelete(newTodos, tag === "inProgress");
 
     if (tag !== "inProgress") {
-      await updateDoc(
-        docRef,
-        {
-          todos: newTodos,
-        },
-        { merge: true }
-      );
+      if(props.type === 'goal'){
+        // props.onDelete()
+        await updateDoc(
+          docRef,
+          {
+            goals: newTodos,
+          },
+          { merge: true }
+        );
+      }else{
+        await updateDoc(
+          docRef,
+          {
+            todos: newTodos,
+          },
+          { merge: true }
+        );
+
+      }
     } else {
       await updateDoc(
         docRef,
