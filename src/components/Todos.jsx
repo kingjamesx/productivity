@@ -77,7 +77,7 @@ const Todos = (props) => {
         <Popup onEdit={editTodoHandler} onAddNewTodo={newTodoHandler} />
       )}
       {ctx.inProgress && <Popup onAddTodoInProgress={todoInProgressHandler} />}
-      {ctx.edit && (
+      {ctx.edit && ctx.taskType !== "goal" && (
         <Popup
           todos={todos}
           todo={todoEdit}
@@ -85,7 +85,10 @@ const Todos = (props) => {
           onAddNewTodo={newTodoHandler}
         />
       )}
+
+      {/* header */}
       <Header />
+
       <div className="todo-big-container ">
         {/* todos */}
         <div className="todo-container ">
@@ -101,10 +104,7 @@ const Todos = (props) => {
                 {todos?.length}
               </div>
             </div>
-            <button
-              onClick={openPopupHandler}
-              className="add-task"
-            >
+            <button onClick={openPopupHandler} className="add-task">
               <img src={addTodo} alt="Add icon" className="cursor-pointer" />
             </button>
           </div>
@@ -134,9 +134,7 @@ const Todos = (props) => {
                 <div className="circle-small bg-[#FFA500]"></div>
                 <p className="text-lg">In progress</p>
               </div>
-              <div className="total-task">
-                {todosInProgress.length}
-              </div>
+              <div className="total-task">{todosInProgress.length}</div>
             </div>
             <button className="add-inprogress">
               <img
@@ -168,9 +166,7 @@ const Todos = (props) => {
                 <div className="circle-small bg-[#8BC48A]"></div>
                 <p className="text-lg">Done</p>
               </div>
-              <div className="total-task">
-                {completedTodos.length}
-              </div>
+              <div className="total-task">{completedTodos.length}</div>
             </div>
             {/* <button className="w-6 h-6 rounded-md bg-slate-300"></button> */}
           </div>

@@ -76,7 +76,7 @@ const Popup = (props) => {
           } else {
             //Update client data
             props.onAddNewTodo((prev) => [...prev, data]);
-            
+
             await updateDoc(
               docRef,
               {
@@ -118,6 +118,7 @@ const Popup = (props) => {
         console.log(docRef.id, docRef);
       } else {
         ctx.editHandler(false);
+        // ctx.taskTypeHandler('')
 
         let todos = props.todos;
 
@@ -128,13 +129,24 @@ const Popup = (props) => {
         todos.splice(editedTodoIndex, 1, data);
 
         //update database
-        await updateDoc(
-          docRef,
-          {
-            todos: todos,
-          },
-          { merge: true }
-        );
+        if (ctx.taskType === "goal") {
+          await updateDoc(
+            docRef,
+            {
+              goals: todos,
+            },
+            { merge: true }
+          );
+          ctx.taskTypeHandler('')
+        } else {
+          await updateDoc(
+            docRef,
+            {
+              todos: todos,
+            },
+            { merge: true }
+          );
+        }
       }
     } catch (err) {
       console.log(err);

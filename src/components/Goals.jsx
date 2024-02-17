@@ -13,6 +13,7 @@ import { get } from "react-hook-form";
 const Goals = () => {
   const ctx = useContext(AuthContext);
   const [goals, setGoals] = useState([]);
+  const [goalEdit, setGoalEdit] = useState({});
   const [completedGoals, setCompletedGoals] = useState([]);
 
   //fetch goals
@@ -31,11 +32,13 @@ const Goals = () => {
       }
 
       //fetch completed goals
+      // if (completedGoals.length === 0) {
       if (docSnap.exists()) {
         setCompletedGoals(docSnap.data().completedGoals);
       } else {
         return console.log("No such document!");
       }
+      // }else{return}
     })();
   }, []);
 
@@ -50,13 +53,20 @@ const Goals = () => {
   const deleteGoalHandler = (goals, inProgress = false) => {
     setGoals(goals);
   };
+
   const completeGoalHandler = (goals, inProgress = false) => {
     setGoals(goals);
+  };
+
+  const editGoalHandler = (goal) => {
+    ctx.taskTypeHandler("goal");
+    setGoalEdit(goal);
   };
 
   return (
     <section className="h-screen relative">
       {ctx.popup && <Popup onAddNewGoal={newGoalHandler} type="goal" />}
+      {ctx.edit && ctx.taskType === "goal" && <Popup todos={goals} todo={goalEdit} />}
 
       <Header />
 
@@ -89,6 +99,7 @@ const Goals = () => {
               todos={goals}
               onDelete={deleteGoalHandler}
               onComplete={completeGoalHandler}
+              onEdit={editGoalHandler}
             />
           ))}
         </div>

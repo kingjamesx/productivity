@@ -7,12 +7,15 @@ const AuthContext = React.createContext({
   editHandler: () => {},
   inProgress: false,
   inProgressHandler: () => {},
+  taskType: "",
+  taskTypeHandler: () => {},
 });
 
 export const AuthContextProvider = (props) => {
   const [popup, setPopup] = useState(false);
   const [edit, setEdit] = useState(false);
   const [inProgress, setInProgress] = useState(false);
+  const [taskType, setTaskType] = useState("");
 
   const popupHandler = (data) => {
     setPopup(data);
@@ -22,6 +25,9 @@ export const AuthContextProvider = (props) => {
   };
   const inProgressHandler = (data) => {
     setInProgress(data);
+  };
+  const taskTypeHandler = (data) => {
+    setTaskType(data);
   };
 
   return (
@@ -33,6 +39,8 @@ export const AuthContextProvider = (props) => {
         editHandler,
         inProgress,
         inProgressHandler,
+        taskType,
+        taskTypeHandler,
       }}
     >
       {props.children}
