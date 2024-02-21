@@ -76,7 +76,7 @@ const Todos = (props) => {
       {ctx.popup && (
         <Popup onEdit={editTodoHandler} onAddNewTodo={newTodoHandler} />
       )}
-      {ctx.inProgress && <Popup onAddTodoInProgress={todoInProgressHandler} />}
+      {ctx.inProgress && ctx.taskType !== 'goal' && <Popup onAddTodoInProgress={todoInProgressHandler} />}
       {ctx.edit && ctx.taskType !== "goal" && (
         <Popup
           todos={todos}

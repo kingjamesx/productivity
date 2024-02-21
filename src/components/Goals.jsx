@@ -15,6 +15,7 @@ const Goals = () => {
   const [goals, setGoals] = useState([]);
   const [goalEdit, setGoalEdit] = useState({});
   const [completedGoals, setCompletedGoals] = useState([]);
+  const [goalsInProgress, setGoalsInProgress] = useState([]);
 
   //fetch goals
   useEffect(() => {
@@ -39,6 +40,13 @@ const Goals = () => {
         return console.log("No such document!");
       }
       // }else{return}
+
+      //fetch goals in progress
+      if (docSnap.exists()) {
+        setGoalsInProgress(docSnap.data().goalsInProgress);
+      } else {
+        return console.log("No such document!");
+      }
     })();
   }, []);
 
@@ -48,25 +56,51 @@ const Goals = () => {
 
   const newGoalHandler = (goals) => {
     setGoals(goals);
+    ctx.inProgressHandler(false);
   };
 
   const deleteGoalHandler = (goals, inProgress = false) => {
-    setGoals(goals);
+    inProgress ? setGoalsInProgress(goals) : setGoals(goals);
   };
 
-  const completeGoalHandler = (goals, inProgress = false) => {
-    setGoals(goals);
+  const completeGoalHandler = (goals, completedGoal, inProgress = false) => {
+    inProgress ? setGoalsInProgress(goals) : setGoals(goals);
+    setCompletedGoals((prev) => [...prev, completedGoal]);
   };
 
   const editGoalHandler = (goal) => {
     ctx.taskTypeHandler("goal");
+    ctx.editHandler(true)
     setGoalEdit(goal);
   };
 
+  const goalInProgressPopupHandler = () => {
+    ctx.inProgressHandler(true);
+    ctx.taskTypeHandler("goal");
+    // ctx.popupHandler(true)
+    // ctx.taskTypeHandler()
+  };
+
+  const addGoalInProgressHandler = (goals) => {
+    setGoalsInProgress(goals);
+    ctx.inProgressHandler(true);
+    ctx.taskTypeHandler("goal");
+  };
+  // || (ctx.inProgress && ctx.taskType === "goal" && ctx.edit)
   return (
     <section className="h-screen relative">
       {ctx.popup && <Popup onAddNewGoal={newGoalHandler} type="goal" />}
-      {ctx.edit && ctx.taskType === "goal" && <Popup todos={goals} todo={goalEdit} />}
+      {ctx.edit && ctx.taskType === "goal" && (
+        <Popup todos={goals} todo={goalEdit} />
+      )}
+      {ctx.inProgress && ctx.taskType === "goal"  && (
+        <Popup
+        todo={goalEdit}
+        todos={goalsInProgress}
+          onAddTodoInProgress={addGoalInProgressHandler}
+          type="goal_in_progress"
+        />
+      )}
 
       <Header />
 
@@ -113,13 +147,11 @@ const Goals = () => {
                 <div className="circle-small bg-[#FFA500]"></div>
                 <p className="text-lg">In progress</p>
               </div>
-              <div className="total-task">
-                3{/* {todosInProgress.length} */}
-              </div>
+              <div className="total-task">{goalsInProgress.length}</div>
             </div>
             <button className="add-inprogress">
               <img
-                // onClick={openPopupInProgressHandler}
+                onClick={goalInProgressPopupHandler}
                 src={addProgress}
                 alt="add icon"
                 className="cursor-pointer"
@@ -129,7 +161,18 @@ const Goals = () => {
           <div className="inprogress-header-border"></div>
 
           {/* goals in-progress main */}
-          <TaskCard />
+          {goalsInProgress.map((goal) => (
+            <TaskCard
+              type="goal"
+              key={goal.id}
+              id={goal.id}
+              todo={goal}
+              todos={goalsInProgress}
+              onDelete={deleteGoalHandler}
+              onComplete={completeGoalHandler}
+              onEdit={editGoalHandler}
+            />
+          ))}
         </div>
         {/* goals */}
         <div className="todo-container">
@@ -140,7 +183,7 @@ const Goals = () => {
                 <div className="circle-small bg-[#8BC48A]"></div>
                 <p className="text-lg">Done</p>
               </div>
-              <div className="total-task">3{/* {completedTodos.length} */}</div>
+              <div className="total-task">{completedGoals.length}</div>
             </div>
           </div>
           <div className="done-header-border"></div>

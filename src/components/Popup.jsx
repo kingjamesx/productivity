@@ -40,11 +40,12 @@ const Popup = (props) => {
     ctx.popupHandler(false);
     ctx.editHandler(false);
     ctx.inProgressHandler(false);
+    ctx.taskTypeHandler("");
   };
 
   const submitHandler = async (data) => {
     ctx.edit
-      ? (data = { ...data, id: props.todo.id })
+      ? (data = { ...data, tag: props.todo.tag, id: props.todo.id })
       : (data = {
           ...data,
           id: Date(),
@@ -97,22 +98,40 @@ const Popup = (props) => {
           //   console.log("No such document!");
           // }
         } else if (data && ctx.inProgress && !ctx.popup) {
-          console.log("inProgresssssssss", data);
+          console.log("inProgresssssssss", data, ctx.inProgress);
           ctx.inProgressHandler(false);
+          ctx.editHandler(false);
+          // ctx.inProgressHandler(false);
+          ctx.popupHandler(false);
+          ctx.taskTypeHandler("");
 
           props.onAddTodoInProgress((prev) => [...prev, data]);
 
           //update todos in-progress
-          try {
-            await updateDoc(
-              docRef,
-              {
-                todosInProgress: arrayUnion(data),
-              },
-              { merge: true }
-            );
-          } catch (error) {
-            console.log(error);
+          if (props.type === "goal_in_progress") {
+            try {
+              await updateDoc(
+                docRef,
+                {
+                  goalsInProgress: arrayUnion(data),
+                },
+                { merge: true }
+              );
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            try {
+              await updateDoc(
+                docRef,
+                {
+                  todosInProgress: arrayUnion(data),
+                },
+                { merge: true }
+              );
+            } catch (error) {
+              console.log(error);
+            }
           }
         }
         console.log(docRef.id, docRef);
@@ -130,14 +149,31 @@ const Popup = (props) => {
 
         //update database
         if (ctx.taskType === "goal") {
-          await updateDoc(
-            docRef,
-            {
-              goals: todos,
-            },
-            { merge: true }
-          );
-          ctx.taskTypeHandler('')
+          if (props.todo.tag === "inProgress") {
+            await updateDoc(
+              docRef,
+              {
+                goalsInProgress: todos,
+              },
+              { merge: true }
+            );
+          } else {
+            await updateDoc(
+              docRef,
+              {
+                goals: todos,
+              },
+              { merge: true }
+            );
+          }
+          // await updateDoc(
+          //   docRef,
+          //   {
+          //     goals: todos,
+          //   },
+          //   { merge: true }
+          // );
+          ctx.taskTypeHandler("");
         } else {
           await updateDoc(
             docRef,
@@ -148,6 +184,10 @@ const Popup = (props) => {
           );
         }
       }
+      ctx.editHandler(false);
+      ctx.inProgressHandler(false);
+      ctx.popupHandler(false);
+      ctx.taskTypeHandler("");
     } catch (err) {
       console.log(err);
     }

@@ -22,7 +22,7 @@ const TaskCard = (props) => {
     const newTodos = [...todos].filter((todo) => todo.id !== props.id);
 
     //update database
-    const tag = props.todo.tag;
+    let tag = props.todo.tag;
     props.onDelete(newTodos, tag === "inProgress");
 
     if (tag !== "inProgress") {
@@ -45,21 +45,35 @@ const TaskCard = (props) => {
         );
       }
     } else {
-      await updateDoc(
-        docRef,
-        {
-          todosInProgress: newTodos,
-        },
-        { merge: true }
-      );
+      if (props.type === "goal") {
+        await updateDoc(
+          docRef,
+          {
+            goalsInProgress: newTodos,
+          },
+          { merge: true }
+        );
+      } else {
+        await updateDoc(
+          docRef,
+          {
+            todosInProgress: newTodos,
+          },
+          { merge: true }
+        );
+      }
     }
   };
 
   const editTodoHandler = () => {
     //Show popup
     ctx.editHandler(true);
+    if(props.todo?.tag === 'inProgress'){
+      ctx.inProgressHandler(true)
+    }
 
     props.onEdit(props.todo);
+    console.log(props.todo)
   };
 
   const completeTodoHandler = async () => {
@@ -105,13 +119,23 @@ const TaskCard = (props) => {
           );
         }
       } else {
-        await updateDoc(
-          docRef,
-          {
-            todosInProgress: newTodos,
-          },
-          { merge: true }
-        );
+        if (props.type === "goal") {
+          await updateDoc(
+            docRef,
+            {
+              goalsInProgress: newTodos,
+            },
+            { merge: true }
+          );
+        } else {
+          await updateDoc(
+            docRef,
+            {
+              todosInProgress: newTodos,
+            },
+            { merge: true }
+          );
+        }
       }
     } catch (error) {
       console.log(error);
@@ -127,7 +151,7 @@ const TaskCard = (props) => {
           },
           { merge: true }
         );
-      }else{
+      } else {
         await updateDoc(
           docRef,
           {
