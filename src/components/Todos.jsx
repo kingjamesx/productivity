@@ -8,6 +8,7 @@ import addProgress from "../assets/icons/progress-add.svg";
 import AuthContext from "../../store/auth-context";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../utils/Firebase";
+// import SidebarMobile from "./SidebarMobile";
 
 const Todos = (props) => {
   const ctx = useContext(AuthContext);
@@ -15,6 +16,12 @@ const Todos = (props) => {
   const [completedTodos, setCompletedTodos] = useState([]);
   const [todosInProgress, setTodosInProgress] = useState([]);
   const [todoEdit, setTodoEdit] = useState({});
+
+  // const [openSidebar, setOpenSidebar] = useState(false);
+
+  // const sidebarToggleHandler = (val) => {
+  //   setOpenSidebar(val);
+  // };
 
   //Fetch todos
   useEffect(() => {
@@ -26,15 +33,14 @@ const Todos = (props) => {
 
       if (docSnap.exists()) {
         //Fetch tasks
-        setTodos(() => docSnap.data().todos);
+        setTodos(() => docSnap.data().todos || []);
 
         //Fetch todos in-progress
-        setTodosInProgress(() => docSnap.data().todosInProgress);
+        setTodosInProgress(() => docSnap.data().todosInProgress || []);
 
         //Fetch completed tasks
-        setCompletedTodos(docSnap.data().completeTodos);
+        setCompletedTodos(docSnap.data().completeTodos || []);
       } else {
-        // docSnap.data() will be undefined in this case
         console.log("No such document!");
       }
     })();
@@ -46,14 +52,17 @@ const Todos = (props) => {
 
   const openPopupInProgressHandler = () => {
     ctx.inProgressHandler(true);
+    // ctx.taskTypeHandler("");
   };
 
   const newTodoHandler = (todo) => {
-    setTodos(todo);
+    console.log(todos);
+    setTodos([...todos, todo]);
   };
 
   const todoInProgressHandler = (todo) => {
-    setTodosInProgress(todo);
+    setTodosInProgress([...todosInProgress, todo]);
+    // ctx.inProgressHandler(true);
   };
 
   const deleteTodoHandler = (todos, inProgress = false) => {
@@ -63,23 +72,29 @@ const Todos = (props) => {
   };
 
   const editTodoHandler = (todo) => {
+    // ctx.taskTypeHandler("");
     setTodoEdit(todo);
+    ctx.editHandler(true);
   };
 
   const completeTodoHandler = (todos, completedTodo, inProgress = false) => {
     !inProgress ? setTodos(todos) : setTodosInProgress(todos);
-    setCompletedTodos((prev) => [...prev, completedTodo]);
+    setCompletedTodos([...completedTodos, completedTodo]);
   };
 
   return (
-    <section className="h-screen relative">
+    <section className="z-[1] md:z-0 h-screen relative">
+      {/* {openSidebar && <SidebarMobile  />} */}
+
       {ctx.popup && (
         <Popup onEdit={editTodoHandler} onAddNewTodo={newTodoHandler} />
       )}
-      {ctx.inProgress && ctx.taskType !== 'goal' && <Popup onAddTodoInProgress={todoInProgressHandler} />}
+      {ctx.inProgress && ctx.taskType !== "goal" && (
+        <Popup onAddTodoInProgress={todoInProgressHandler} />
+      )}
       {ctx.edit && ctx.taskType !== "goal" && (
         <Popup
-          todos={todos}
+          todos={ctx.inProgress ? todosInProgress : todos}
           todo={todoEdit}
           onEdit={editTodoHandler}
           onAddNewTodo={newTodoHandler}
@@ -87,7 +102,7 @@ const Todos = (props) => {
       )}
 
       {/* header */}
-      <Header />
+      {/* <Header isOpen={openSidebar} onSidebarToggle={sidebarToggleHandler} /> */}
 
       <div className="todo-big-container ">
         {/* todos */}
@@ -101,11 +116,16 @@ const Todos = (props) => {
               </div>
               <div className="total-task">
                 {/* 3 */}
-                {todos?.length}
+                {todos?.length ? todos?.length : 0}
               </div>
             </div>
-            <button onClick={openPopupHandler} className="add-task">
-              <img src={addTodo} alt="Add icon" className="cursor-pointer" />
+            <button className="add-task">
+              <img
+                onClick={openPopupHandler}
+                src={addTodo}
+                alt="Add icon"
+                className="cursor-pointer"
+              />
             </button>
           </div>
           <div className="task-header-border"></div>
@@ -134,7 +154,9 @@ const Todos = (props) => {
                 <div className="circle-small bg-[#FFA500]"></div>
                 <p className="text-lg">In progress</p>
               </div>
-              <div className="total-task">{todosInProgress.length}</div>
+              <div className="total-task">
+                {todosInProgress?.length ? todosInProgress?.length : 0}
+              </div>
             </div>
             <button className="add-inprogress">
               <img
@@ -166,7 +188,9 @@ const Todos = (props) => {
                 <div className="circle-small bg-[#8BC48A]"></div>
                 <p className="text-lg">Done</p>
               </div>
-              <div className="total-task">{completedTodos.length}</div>
+              <div className="total-task">
+                {completedTodos?.length ? completedTodos?.length : 0}
+              </div>
             </div>
             {/* <button className="w-6 h-6 rounded-md bg-slate-300"></button> */}
           </div>

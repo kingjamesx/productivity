@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 .todo-container {
-  @apply bg-[#EEF2F5] rounded-[10px] w-auto p-3;
+  @apply bg-[#EEF2F5] rounded-[10px] w-auto p-3 mb-6;
 }
 
 .todo-big-container {
-  @apply grid grid-cols-3 gap-6 h-full text-base;
+  @apply  lg:grid  lg:gap-6 lg:grid-cols-3  h-full text-base;
 }
 
 .task-container-header {
@@ -27,7 +27,7 @@
 }
 
 .add-task {
-  @apply flex items-center justify-center w-6 h-6 rounded-md bg-blue-500 bg-opacity-15;
+  @apply flex items-center justify-center w-6 h-6 rounded-md bg-blue-500 bg-opacity-15 cursor-pointer;
 }
 
 .add-inprogress {
@@ -47,9 +47,9 @@
 }
 
 .nav-active {
-  @apply pl-11 bg-[#4391ED1A] bg-opacity-[10%] py-2.5;
+  @apply pl-11 w-full bg-[#4391ED1A] bg-opacity-[10%] py-2.5 flex gap-2 items-center;
 }
 
 .nav {
-  @apply pl-11;
+  @apply pl-11 flex gap-2 items-center;
 }

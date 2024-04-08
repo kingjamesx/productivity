@@ -8,14 +8,14 @@ import AuthContext from "../../store/auth-context";
 import Popup from "./Popup";
 
 const TaskCard = (props) => {
-  const { year, month, date } = FormatDate(props.due_date);
+  const { year, month, date } = FormatDate(props.todo.due_date);
   const due_date = `${month} ${date}, ${year}`;
 
   const ctx = useContext(AuthContext);
   const docRef = doc(db, "users", sessionStorage.getItem("uid"));
 
   const deleteHandler = async () => {
-    console.log({ ...props }, props.id);
+    // console.log({ ...props }, props.id);
     let todos = props.todos;
 
     //remove the found item from database
@@ -79,7 +79,6 @@ const TaskCard = (props) => {
   const completeTodoHandler = async () => {
     // get the id of the card and update it
     let todos = props.todos;
-
     //find index of todo
     const completedTodoIndex = todos.findIndex((todo) => todo.id === props.id);
 
@@ -92,7 +91,7 @@ const TaskCard = (props) => {
     let newTodos = todos.filter((todo, i) => i !== completedTodoIndex);
     const completedTodo = {
       ...todos[completedTodoIndex],
-      date_done: new Date(),
+      date_done: Date(), ///////////////
     };
 
     //Update data on clientside

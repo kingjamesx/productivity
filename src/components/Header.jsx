@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import search from "../assets/icons/search.svg";
 import notification from "../assets/icons/notification.svg";
+import { FaHamburger, FaBars } from "react-icons/fa";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../utils/Firebase";
 
-const Header = () => {
-    const [username, setUsername] = useState("");
-//   let username;
+const Header = (props) => {
+  const [username, setUsername] = useState("");
+  //   let username;
 
   const getUsername = async () => {
     try {
@@ -16,8 +17,7 @@ const Header = () => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        console.log(docSnap.data().username);
-        setUsername( docSnap.data().username );
+        setUsername(docSnap.data().username);
       } else {
         console.log("No such document!");
       }
@@ -32,9 +32,14 @@ const Header = () => {
     })();
   }, []);
 
+  const sidebarHandler = () => {
+    props.onSidebarToggle(!props.isOpen);
+    // console.log(props.isOpen)
+  };
+
   return (
-    <div className="mb-14 text-base flex items-center justify-between">
-      <div className="flex items-center h-12">
+    <div className=" mb-14 text-base flex items-center md:justify-end justify-between ">
+      {/* <div className="flex items-center h-12">
         <div className="py-3 pl-3 pr-4 border rounded-tl-md rounded-bl-md border-r-0 h-full">
           <img src={search} alt="search icon" className="" />
         </div>
@@ -43,8 +48,9 @@ const Header = () => {
           placeholder="Search"
           type="text"
         />
-      </div>
-      <div className="flex items-center gap-9">
+      </div> */}
+      <FaBars onClick={sidebarHandler} className="md:hidden block " />
+      <div className=" flex items-center gap-9">
         <img src={notification} alt="notification icon" className="" />
         <div className="flex items-center gap-3">
           <p className="">Hey {username}</p>

@@ -8,7 +8,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import { app, db } from "../../utils/Firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 
 const Login = () => {
   const [loginData, setLoginData] = useState({});
@@ -19,6 +25,47 @@ const Login = () => {
   const navigate = useNavigate();
 
   const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  const loginWithGoogle = async () => {
+    //create a db using the uid as the doc Id
+    try {
+      // } catch (err) {
+      //   console.log(err);
+      //   setRegistrationError(true);
+      // }
+
+      // try {
+      setIsLoading(true);
+      const result = await signInWithPopup(auth, provider);
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const user = result.user;
+      const { displayName, email, accessToken, photoURL, uid } = user;
+      console.log(email, displayName, accessToken, photoURL, uid);
+      sessionStorage.setItem("uid", uid);
+
+      await setDoc(doc(db, "users", uid), {
+        email: email,
+        username: displayName.split(' ')[0],
+      });
+
+      if (accessToken) {
+        setIsLoading(false);
+        navigate("/main/home");
+        toast.success("Welcome!");
+      } else {
+        setIsLoading(false);
+        return;
+      }
+    } catch (error) {
+      setIsLoading(false);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.customData.email;
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      toast.error(error.code);
+    }
+  };
 
   //yup schema
   let userSchema = object({
@@ -56,7 +103,7 @@ const Login = () => {
       const user = userCredential.user;
       const userToken = user.accessToken;
       const userUid = user.uid;
-    
+
       sessionStorage.setItem("uid", userUid);
       // sessionStorage.setItem("username", userUid);
 
@@ -64,7 +111,7 @@ const Login = () => {
 
       if (!isLoginError) {
         setIsLoading(false);
-        navigate("/main");
+        navigate("/main/home");
         toast.success("Welcome!");
       } else {
         setIsLoading(false);
@@ -139,7 +186,10 @@ const Login = () => {
         {/* </Link> */}
       </form>
       <p className="text-base text-center text-white my-3">OR</p>
-      <button className="text-base h-14 w-full sm:w-[500px] border border-white text-white rounded-[4px]">
+      <button
+        onClick={loginWithGoogle}
+        className="text-base h-14 w-full sm:w-[500px] border border-white text-white rounded-[4px]"
+      >
         SIGNIN WITH GOOGLE
       </button>
     </section>

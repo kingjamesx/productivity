@@ -72,7 +72,6 @@ const Signup = () => {
         email: data.email,
         username: data.username,
       });
-      console.log("yayyyyyyy");
     } catch (err) {
       console.log(err);
       setRegistrationError(true);

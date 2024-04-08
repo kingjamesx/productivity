@@ -27,7 +27,7 @@ const Goals = () => {
 
       //fetch goals
       if (docSnap.exists()) {
-        setGoals(docSnap.data().goals);
+        setGoals(docSnap.data().goals || []);
       } else {
         return console.log("No such document!");
       }
@@ -35,7 +35,7 @@ const Goals = () => {
       //fetch completed goals
       // if (completedGoals.length === 0) {
       if (docSnap.exists()) {
-        setCompletedGoals(docSnap.data().completedGoals);
+        setCompletedGoals(docSnap.data().completedGoals || []);
       } else {
         return console.log("No such document!");
       }
@@ -43,7 +43,7 @@ const Goals = () => {
 
       //fetch goals in progress
       if (docSnap.exists()) {
-        setGoalsInProgress(docSnap.data().goalsInProgress);
+        setGoalsInProgress(docSnap.data().goalsInProgress || []);
       } else {
         return console.log("No such document!");
       }
@@ -54,8 +54,8 @@ const Goals = () => {
     ctx.popupHandler(true);
   };
 
-  const newGoalHandler = (goals) => {
-    setGoals(goals);
+  const newGoalHandler = (goal) => {
+    setGoals([...goals, goal]);
     ctx.inProgressHandler(false);
   };
 
@@ -70,7 +70,7 @@ const Goals = () => {
 
   const editGoalHandler = (goal) => {
     ctx.taskTypeHandler("goal");
-    ctx.editHandler(true)
+    ctx.editHandler(true);
     setGoalEdit(goal);
   };
 
@@ -81,28 +81,28 @@ const Goals = () => {
     // ctx.taskTypeHandler()
   };
 
-  const addGoalInProgressHandler = (goals) => {
-    setGoalsInProgress(goals);
+  const addGoalInProgressHandler = (goal) => {
+    setGoalsInProgress([...goalsInProgress, goal]);
     ctx.inProgressHandler(true);
     ctx.taskTypeHandler("goal");
   };
   // || (ctx.inProgress && ctx.taskType === "goal" && ctx.edit)
   return (
-    <section className="h-screen relative">
+    <section className="z-[-1] md:z-0 h-screen relative">
       {ctx.popup && <Popup onAddNewGoal={newGoalHandler} type="goal" />}
       {ctx.edit && ctx.taskType === "goal" && (
         <Popup todos={goals} todo={goalEdit} />
       )}
-      {ctx.inProgress && ctx.taskType === "goal"  && (
+      {ctx.inProgress && ctx.taskType === "goal" && (
         <Popup
-        todo={goalEdit}
-        todos={goalsInProgress}
+          todo={goalEdit}
+          todos={goalsInProgress}
           onAddTodoInProgress={addGoalInProgressHandler}
           type="goal_in_progress"
         />
       )}
 
-      <Header />
+      {/* <Header /> */}
 
       {/* main */}
       <div className="todo-big-container">
@@ -115,7 +115,9 @@ const Goals = () => {
                 <div className="circle-small bg-blue-500"></div>
                 <p className="text-lg">Goals</p>
               </div>
-              <div className="total-task">{goals?.length}</div>
+              <div className="total-task">
+                {goals?.length ? goals?.length : 0}
+              </div>
             </div>
             <button onClick={openPopupHandler} className="add-task">
               <img src={addTodo} alt="Add icon" className="cursor-pointer" />
@@ -124,7 +126,7 @@ const Goals = () => {
           <div className="task-header-border"></div>
 
           {/* goals main */}
-          {goals.map((goal) => (
+          {goals?.map((goal) => (
             <TaskCard
               type="goal"
               key={goal.id}
@@ -147,7 +149,9 @@ const Goals = () => {
                 <div className="circle-small bg-[#FFA500]"></div>
                 <p className="text-lg">In progress</p>
               </div>
-              <div className="total-task">{goalsInProgress.length}</div>
+              <div className="total-task">
+                {goalsInProgress?.length ? goalsInProgress?.length : 0}
+              </div>
             </div>
             <button className="add-inprogress">
               <img
@@ -161,7 +165,7 @@ const Goals = () => {
           <div className="inprogress-header-border"></div>
 
           {/* goals in-progress main */}
-          {goalsInProgress.map((goal) => (
+          {goalsInProgress?.map((goal) => (
             <TaskCard
               type="goal"
               key={goal.id}
@@ -183,12 +187,14 @@ const Goals = () => {
                 <div className="circle-small bg-[#8BC48A]"></div>
                 <p className="text-lg">Done</p>
               </div>
-              <div className="total-task">{completedGoals.length}</div>
+              <div className="total-task">
+                {completedGoals?.length ? completedGoals?.length : 0}
+              </div>
             </div>
           </div>
           <div className="done-header-border"></div>
 
-          {completedGoals.map((goal) => (
+          {completedGoals?.map((goal) => (
             <TaskDoneCard key={goal.id} todo={goal} />
           ))}
         </div>

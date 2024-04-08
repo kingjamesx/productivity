@@ -59,14 +59,14 @@ const Popup = (props) => {
     //update database
     try {
       if (!ctx.edit) {
-        console.log(data, errors);
+        // console.log(data, errors);
 
         if (data && ctx.popup && !ctx.inProgress) {
           ctx.popupHandler(false);
 
           if (props.type === "goal") {
             //Update client data
-            props.onAddNewGoal((prev) => [...prev, data]);
+            props.onAddNewGoal( data);
             await updateDoc(
               docRef,
               {
@@ -76,7 +76,7 @@ const Popup = (props) => {
             );
           } else {
             //Update client data
-            props.onAddNewTodo((prev) => [...prev, data]);
+            props.onAddNewTodo(data);
 
             await updateDoc(
               docRef,
@@ -98,14 +98,14 @@ const Popup = (props) => {
           //   console.log("No such document!");
           // }
         } else if (data && ctx.inProgress && !ctx.popup) {
-          console.log("inProgresssssssss", data, ctx.inProgress);
+          // console.log("inProgresssssssss", data, ctx.inProgress);
           ctx.inProgressHandler(false);
           ctx.editHandler(false);
           // ctx.inProgressHandler(false);
           ctx.popupHandler(false);
           ctx.taskTypeHandler("");
 
-          props.onAddTodoInProgress((prev) => [...prev, data]);
+          props.onAddTodoInProgress(data);
 
           //update todos in-progress
           if (props.type === "goal_in_progress") {
@@ -134,7 +134,7 @@ const Popup = (props) => {
             }
           }
         }
-        console.log(docRef.id, docRef);
+        // console.log(docRef.id, docRef);
       } else {
         ctx.editHandler(false);
         // ctx.taskTypeHandler('')
@@ -175,13 +175,28 @@ const Popup = (props) => {
           // );
           ctx.taskTypeHandler("");
         } else {
-          await updateDoc(
+          if(props.todo.tag === 'inProgress'){
+            await updateDoc(
+              docRef,
+              {
+                todosInProgress: todos,
+              },
+              { merge: true }
+            );
+          }else{await updateDoc(
             docRef,
             {
               todos: todos,
             },
             { merge: true }
-          );
+          );}
+          // await updateDoc(
+          //   docRef,
+          //   {
+          //     todos: todos,
+          //   },
+          //   { merge: true }
+          // );
         }
       }
       ctx.editHandler(false);
@@ -194,11 +209,11 @@ const Popup = (props) => {
   };
 
   return (
-    <div className="absolute z-[10000] flex justify-center items-center h-screen mt-[-28px] ml-[calc(16.67%+32px)] ">
+    <div className="absolute z-[10000] flex justify-center items-center w-[5/6] h-screen lg:mt-[-28px] lg:ml-[calc(16.67%+32px)] ">
       <Modal onClose={closePopupHandler}></Modal>
       <form
         onSubmit={handleSubmit(submitHandler)}
-        className="bg-white rounded-lg p-4 pt-2 z-[100000000000000000]   "
+        className="bg-white rounded-lg p-4 pt-2 z-[100000000000000000]"
       >
         <div className="flex item-center justify-between mb-3">
           <h4 className="font-bold text-lg">Create To-do</h4>
@@ -210,7 +225,7 @@ const Popup = (props) => {
           />
         </div>
 
-        <div className="flex flex-col w-[400px]">
+        <div className="flex flex-col w-[250px] md:w-[400px]">
           <label htmlFor="to-do" className="mb-1">
             To-do
           </label>
@@ -223,7 +238,7 @@ const Popup = (props) => {
           />
         </div>
 
-        <div className="mt-4 flex flex-col w-[400px]">
+        <div className="mt-4 flex flex-col w-[250px] md:w-[400px]">
           <label htmlFor="description" className="mb-1">
             Description
           </label>
@@ -265,7 +280,7 @@ const Popup = (props) => {
           </div> */}
         </div>
 
-        <div className="mt-4 flex flex-col w-[400px]">
+        <div className="mt-4 flex flex-col w-[250px] md:w-[400px]">
           <label htmlFor="priority" className="mb-1">
             Priority
           </label>

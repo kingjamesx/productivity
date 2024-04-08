@@ -2,7 +2,7 @@ import React from "react";
 import { FormatDate } from "../hooks/FormatDate";
 
 const TaskDoneCard = (props) => {
-  const { year, month, date } = FormatDate(props.todo.date_done);
+  const { year, month, date } = FormatDate(props.todo.date_done, true);
   const date_completed = `${month} ${date}, ${year}`
 
   const shortenDescription = (text) => {
