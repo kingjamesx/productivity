@@ -30,13 +30,7 @@ const Login = () => {
   const loginWithGoogle = async () => {
     //create a db using the uid as the doc Id
     try {
-      // } catch (err) {
-      //   console.log(err);
-      //   setRegistrationError(true);
-      // }
-
-      // try {
-      setIsLoading(true);
+      // setIsLoading(true);
       const result = await signInWithPopup(auth, provider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const user = result.user;
@@ -50,7 +44,7 @@ const Login = () => {
       });
 
       if (accessToken) {
-        setIsLoading(false);
+        // setIsLoading(false);
         navigate("/main/home");
         toast.success("Welcome!");
       } else {
@@ -58,7 +52,7 @@ const Login = () => {
         return;
       }
     } catch (error) {
-      setIsLoading(false);
+      // setIsLoading(false);
       const errorCode = error.code;
       const errorMessage = error.message;
       const email = error.customData.email;
