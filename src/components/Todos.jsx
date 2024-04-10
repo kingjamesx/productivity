@@ -103,6 +103,7 @@ const Todos = (props) => {
 
       {/* header */}
       {/* <Header isOpen={openSidebar} onSidebarToggle={sidebarToggleHandler} /> */}
+      {/* <h2 className="text-5xl font-bold mb-14">Todos</h2> */}
 
       <div className="todo-big-container ">
         {/* todos */}

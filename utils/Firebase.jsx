@@ -6,13 +6,13 @@ import { getAnalytics } from "firebase/analytics";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCb4FvbI0cbAp8er_VtW25Vp9Fz8MRpfFU",
-  authDomain: "productivity-app-1b355.firebaseapp.com",
-  projectId: "productivity-app-1b355",
-  storageBucket: "productivity-app-1b355.appspot.com",
-  messagingSenderId: "273733865394",
-  appId: "1:273733865394:web:b0da97aebf1378caf5deab",
-  measurementId: "G-WMFEJP1J9R",
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
