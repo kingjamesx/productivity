@@ -14,6 +14,7 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect
 } from "firebase/auth";
 
 const Login = () => {
@@ -48,7 +49,7 @@ const Login = () => {
         navigate("/main/home");
         toast.success("Welcome!");
       } else {
-        setIsLoading(false);
+        // setIsLoading(false);
         return;
       }
     } catch (error) {

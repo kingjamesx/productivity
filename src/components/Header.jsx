@@ -17,7 +17,7 @@ const Header = (props) => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setUsername(docSnap.data().username);
+        setUsername(docSnap.data().username || '');
       } else {
         console.log("No such document!");
       }
@@ -53,7 +53,7 @@ const Header = (props) => {
       <div className=" flex items-center gap-9">
         <img src={notification} alt="notification icon" className="" />
         <div className="flex items-center gap-3">
-          <p className="">Hey {username}</p>
+          <p className="">Hey {username? username : ''}</p>
           <div className="h-8 w-8 rounded-full bg-slate-300"></div>
         </div>
       </div>
