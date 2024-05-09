@@ -8,13 +8,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import { app, db } from "../../utils/Firebase";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, getDoc, doc } from "firebase/firestore";
 import {
   getAuth,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-  signInWithRedirect
+  signInWithRedirect,
 } from "firebase/auth";
 
 const Login = () => {
@@ -35,14 +35,31 @@ const Login = () => {
       const result = await signInWithPopup(auth, provider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const user = result.user;
+      console.log(user, result, credential);
       const { displayName, email, accessToken, photoURL, uid } = user;
-      console.log(email, displayName, accessToken, photoURL, uid);
+      console.log(user.email);
       sessionStorage.setItem("uid", uid);
+      sessionStorage.setItem("username", displayName);
 
-      await setDoc(doc(db, "users", uid), {
-        email: email,
-        username: displayName.split(' ')[0],
-      });
+      const docRef = doc(db, "users", uid);
+      const docSnap = await getDoc(docRef);
+
+      if(docSnap.exists()){
+        console.log('yesss!!')
+      }else{
+        await setDoc(doc(db, "users", uid), {
+          email: email,
+          username: displayName.split(" ")[0],
+          todos: [],
+          goals: [],
+          goalsInProgress: [],
+          todosInProgress: [],
+          completedGoals: [],
+          completeTodos: [],
+        });
+      }
+
+      
 
       if (accessToken) {
         // setIsLoading(false);
@@ -54,11 +71,12 @@ const Login = () => {
       }
     } catch (error) {
       // setIsLoading(false);
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      const email = error.customData.email;
+      // const errorCode = error.code;
+      // const errorMessage = error.message;
+      // const email = error.customData.email;
       const credential = GoogleAuthProvider.credentialFromError(error);
       toast.error(error.code);
+      console.log(error.message)
     }
   };
 
@@ -104,7 +122,7 @@ const Login = () => {
 
       console.log(user);
 
-      if (!isLoginError) {
+      if (userToken) {
         setIsLoading(false);
         navigate("/main/home");
         toast.success("Welcome!");
@@ -115,7 +133,7 @@ const Login = () => {
     } catch (err) {
       setIsLoading(false);
       console.log(err);
-      setLoginError(err.code);
+      setLoginError(err.me);
       toast.error(err.code);
     }
   };

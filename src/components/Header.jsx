@@ -19,6 +19,7 @@ const Header = (props) => {
       if (docSnap.exists()) {
         setUsername(docSnap.data().username || '');
       } else {
+        setUsername(sessionStorage.getItem(username))
         console.log("No such document!");
       }
     } catch (error) {

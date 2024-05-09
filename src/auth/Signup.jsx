@@ -66,11 +66,18 @@ const Signup = () => {
     const user = userCredential.user;
     console.log(user);
 
+     sessionStorage.setItem('uid', user.uid)
     //create a db using the uid as the doc Id
     try {
       await setDoc(doc(db, "users", user.uid), {
         email: data.email,
         username: data.username,
+        todos: [],
+        goals:[],
+        goalsInProgress: [],
+        todosInProgress: [],
+        completedGoals: [],
+        completeTodos: []
       });
     } catch (err) {
       console.log(err);
@@ -88,6 +95,7 @@ const Signup = () => {
         // return;
       }
     } catch (error) {
+      setIsLoading(false)
       console.log(error);
       const errorCode = error.code;
       const errorMessage = error.message;

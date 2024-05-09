@@ -26,14 +26,16 @@ const Todos = (props) => {
   //Fetch todos
   useEffect(() => {
     (async () => {
-      const uid = sessionStorage.getItem("uid");
-
-      const docRef = doc(db, "users", uid);
-      const docSnap = await getDoc(docRef);
+      try {
+        const uid = sessionStorage.getItem("uid");
+        console.log(uid)
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        console.log(docSnap.data())
 
       if (docSnap.exists()) {
         //Fetch tasks
-        setTodos(() => docSnap.data().todos || []);
+        setTodos(() => (docSnap.data().todos ? docSnap.data().todos : []));
 
         //Fetch todos in-progress
         setTodosInProgress(() => docSnap.data().todosInProgress || []);
@@ -43,6 +45,10 @@ const Todos = (props) => {
       } else {
         console.log("No such document!");
       }
+      } catch (error) {
+        console.log(error.message)
+      }
+      
     })();
   }, []);
 
