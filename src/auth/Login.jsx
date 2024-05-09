@@ -44,20 +44,20 @@ const Login = () => {
       const docRef = doc(db, "users", uid);
       const docSnap = await getDoc(docRef);
 
-      if(docSnap.exists()){
-        console.log('yesss!!')
-      }else{
-        await setDoc(doc(db, "users", uid), {
-          email: email,
-          username: displayName.split(" ")[0],
-          todos: [],
-          goals: [],
-          goalsInProgress: [],
-          todosInProgress: [],
-          completedGoals: [],
-          completeTodos: [],
-        });
-      }
+      // if(docSnap.exists()){
+      //   console.log('yesss!!')
+      // }else{
+      //   await setDoc(doc(db, "users", uid), {
+      //     email: email,
+      //     username: displayName.split(" ")[0],
+      //     todos: [],
+      //     goals: [],
+      //     goalsInProgress: [],
+      //     todosInProgress: [],
+      //     completedGoals: [],
+      //     completeTodos: [],
+      //   });
+      // }
 
       
 
