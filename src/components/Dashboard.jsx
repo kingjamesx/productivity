@@ -19,7 +19,7 @@ const Dashboard = () => {
   // const updateTodoHandler = () => {};
 
   return (
-    <section className="flex relative w-screen ">
+    <section className="flex relative w-screen h-screen">
       {/* {openSidebar && <SidebarMobile onClose={sidebarToggleHandler}  />} */}
       <MobileSidebar/>
       {/* {ctx.popup && <Popup />} */}
