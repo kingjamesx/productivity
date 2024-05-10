@@ -1,9 +1,5 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import star from "../assets/icons/star.png";
-// import todo from "../assets/icons/todo.png";
-// import home from "../assets/icons/home.png";
-import { FaHome, FaTasks, FaSignOutAlt } from "react-icons/fa";
 import { getAuth, signOut } from "firebase/auth";
 import { app } from "../../utils/Firebase";
 import {toast} from "react-toastify"

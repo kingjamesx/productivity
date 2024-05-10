@@ -1,10 +1,27 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
+import { app } from "../../utils/Firebase";
+import { toast } from "react-toastify";
 
 const MobileSidebar = () => {
+  const auth = getAuth(app);
+  const navigate = useNavigate();
+
+  const logoutHandler = async () => {
+    try {
+      await signOut(auth);
+      sessionStorage.removeItem("uid");
+      navigate("/");
+      toast.success("Bye! Go smash those tasks.");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.code);
+    }
+  };
   return (
-    <div className="block md:hidden font-[500] shadow-[7px_-1px_12px_0_rgba(0,0,0,0.11)] z-2000000000000000 w-full bg-white py-2 absolute bottom-0">
-      <div className="grid grid-cols-4 items-center">
+    <div className="block md:hidden font-[500] shadow-[7px_-1px_12px_0_rgba(0,0,0,0.11)] z-40000000000000000 w-full bg-white py-2 absolute bottom-0">
+      <div className="grid grid-cols-5 items-center">
         <NavLink
           to="/main/home"
           className={({ isActive }) =>
@@ -74,9 +91,27 @@ const MobileSidebar = () => {
             height="20px"
             viewBox="0 0 24 24"
           >
-            <path fill="currentColor" d="M3 22V8h4v14zm7 0V2h4v20zm7 0v-8h4v8z" />
+            <path
+              fill="currentColor"
+              d="M3 22V8h4v14zm7 0V2h4v20zm7 0v-8h4v8z"
+            />
           </svg>
           Analytics
+        </NavLink>
+        <NavLink onClick={logoutHandler} className="nav-mobile">
+          {/* <FaSignOutAlt/> */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="m17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5M4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4z"
+            />
+          </svg>
+          Log out
         </NavLink>
       </div>
     </div>
