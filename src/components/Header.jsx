@@ -4,6 +4,7 @@ import notification from "../assets/icons/notification.svg";
 import { FaHamburger, FaBars } from "react-icons/fa";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../utils/Firebase";
+import Logo from "./Logo";
 
 const Header = (props) => {
   const [username, setUsername] = useState("");
@@ -17,9 +18,9 @@ const Header = (props) => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setUsername(docSnap.data().username || '');
+        setUsername(docSnap.data().username || "");
       } else {
-        setUsername(sessionStorage.getItem(username))
+        // setUsername(sessionStorage.getItem(username));
         console.log("No such document!");
       }
     } catch (error) {
@@ -50,11 +51,14 @@ const Header = (props) => {
           type="text"
         />
       </div> */}
-      <FaBars onClick={sidebarHandler} className="md:hidden block " />
+      {/* <FaBars onClick={sidebarHandler} className="md:hidden block " /> */}
+      <div className="block md:hidden ml-[-44px]">
+        <Logo />
+      </div>
       <div className=" flex items-center gap-9">
         <img src={notification} alt="notification icon" className="" />
         <div className="flex items-center gap-3">
-          <p className="">Hey {username? username : ''}</p>
+          <p className="">Hey {username ? username : ""}</p>
           <div className="h-8 w-8 rounded-full bg-slate-300"></div>
         </div>
       </div>

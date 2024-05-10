@@ -53,3 +53,13 @@
 .nav {
   @apply pl-11 flex gap-2 items-center;
 }
+
+.nav-mobile{
+  @apply flex flex-col gap-1 text-[#a0aec0] items-center
+}
+
+.nav-mobile-active{
+  @apply flex flex-col gap-1 items-center text-[#2d3748]
+}
+
+/* bg-[#4391ED1A] bg-opacity-[10%] py-2.5 */

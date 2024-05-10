@@ -87,9 +87,9 @@ const Todos = (props) => {
     !inProgress ? setTodos(todos) : setTodosInProgress(todos);
     setCompletedTodos([...completedTodos, completedTodo]);
   };
-
+  // z-[1]md:z-0
   return (
-    <section className="z-[1] md:z-0 h-screen relative">
+    <section className="z-[-1]  h-screen relative">
       {/* {openSidebar && <SidebarMobile  />} */}
 
       {ctx.popup && (

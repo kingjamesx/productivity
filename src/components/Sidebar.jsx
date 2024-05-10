@@ -36,6 +36,9 @@ const Sidebar = () => {
   };
   return (
     <div className="text-lg  pt-8 pb-[50px] flex flex-col justify-between h-screen shadow-[7px_-1px_12px_0_rgba(0,0,0,0.11)]">
+        <div className="pl-11 font-bold text-xl flex items-center gap-1">
+          <div className="w-5 h-5 bg-blue-500 rounded-bl-[7px] rounded-tr-[4px]"></div>
+          PunchGoal</div>
       <div className="flex flex-col gap-9">
         <NavLink
           to="/main/home"
