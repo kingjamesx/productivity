@@ -59,7 +59,7 @@ const Header = (props) => {
         <img src={notification} alt="notification icon" className="" />
         <div className="flex items-center gap-3">
           <p className="">Hey {username ? username : ""}</p>
-          <div className="h-8 w-8 rounded-full bg-slate-300"></div>
+          <div className="h-4 w-4 md:h-8 md:w-8 rounded-full bg-slate-300"></div>
         </div>
       </div>
     </div>
