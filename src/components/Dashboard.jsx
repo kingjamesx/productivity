@@ -19,7 +19,7 @@ const Dashboard = () => {
   // const updateTodoHandler = () => {};
 
   return (
-    <section className="flex relative w-screen h-screen overflow-y-auto">
+    <section className="flex relative w-screen md:h-screen md:overflow-y-auto">
       {/* {openSidebar && <SidebarMobile onClose={sidebarToggleHandler}  />} */}
       {/* {ctx.popup && <Popup />} */}
 
