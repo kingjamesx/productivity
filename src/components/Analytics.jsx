@@ -112,7 +112,7 @@ const Analytics = () => {
   };
 
   return (
-    <section className="z-[-1]">
+    <section className="md:h-screen">
       {/* <Header /> */}
       <BarChart chartData={userData} />
     </section>

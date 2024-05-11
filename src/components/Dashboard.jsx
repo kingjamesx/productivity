@@ -21,15 +21,18 @@ const Dashboard = () => {
   return (
     <section className="flex relative w-screen h-screen overflow-y-auto">
       {/* {openSidebar && <SidebarMobile onClose={sidebarToggleHandler}  />} */}
-      <MobileSidebar/>
       {/* {ctx.popup && <Popup />} */}
+
       {/* {ctx.popup && <Popup onClosePopup={closePopupHandler} />} */}
       <div className="hidden md:block md:w-2/6 lg:w-1/6 ">
         <Sidebar />
       </div>
-      <div className="relative md:z-[30000000000000] w-full md:w-5/6 pt-3 md:pt-7 px-4 md:pl-8 md:pr-10 overflow-y-auto h-screen">
-      {/* <Header isOpen={openSidebar} onSidebarToggle={sidebarToggleHandler} /> */}
-      <Header/>
+      <div className="relative md:z-[30000000000000] w-full md:w-5/6 pt-3 md:pt-7 px-4 md:pl-8 md:pr-10 md:overflow-y-auto md:h-screen">
+        {/* <Header isOpen={openSidebar} onSidebarToggle={sidebarToggleHandler} /> */}
+        <div className="absolute bottom-0 left-0">
+          <MobileSidebar />
+        </div>
+        <Header />
         <Outlet />
         {/* <Todos onPopup={popupHandler} /> */}
       </div>

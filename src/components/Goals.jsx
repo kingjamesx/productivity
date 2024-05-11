@@ -88,7 +88,7 @@ const Goals = () => {
   };
   // || (ctx.inProgress && ctx.taskType === "goal" && ctx.edit) z-[-1] md:z-0
   return (
-    <section className="z-[-1] h-screen relative">
+    <section className=" md:h-screen relative">
       {ctx.popup && <Popup onAddNewGoal={newGoalHandler} type="goal" />}
       {ctx.edit && ctx.taskType === "goal" && (
         <Popup todos={goals} todo={goalEdit} />

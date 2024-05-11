@@ -20,7 +20,7 @@ const MobileSidebar = () => {
     }
   };
   return (
-    <div className="block md:hidden font-[500] shadow-[7px_-1px_12px_0_rgba(0,0,0,0.11)] z-40000000000000000 w-full bg-white py-2 absolute bottom-0">
+    <div className="block md:hidden font-[500] shadow-[7px_-1px_12px_0_rgba(0,0,0,0.11)] z-40000000000000000 w-screen bg-white py-2 ">
       <div className="grid grid-cols-5 items-center">
         <NavLink
           to="/main/home"

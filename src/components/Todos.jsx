@@ -89,7 +89,7 @@ const Todos = (props) => {
   };
   // z-[1]md:z-0
   return (
-    <section className="z-[-1]  h-screen relative">
+    <section className=" z-[1] md:h-screen relative">
       {/* {openSidebar && <SidebarMobile  />} */}
 
       {ctx.popup && (
