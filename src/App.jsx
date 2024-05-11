@@ -19,14 +19,14 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create-account" element={<Signup />} />
-        {/* <Route element={<ProtectedRoutes />}> */}
+        <Route element={<ProtectedRoutes />}>
           <Route path="/main" element={<Dashboard />}>
             <Route path="/main/home" element={<Home />} />
             <Route path="/main/to-dos" element={<Todos />} />
             <Route path="/main/goals" element={<Goals />} />
             <Route path="/main/analytics" element={<Analytics />} />
           </Route>
-        {/* </Route> */}
+        </Route>
       </Routes>
       <ToastContainer
         position="top-right"
