@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import { app, db } from "../../utils/Firebase";
 import { setDoc, getDoc, doc } from "firebase/firestore";
+import LogoBig from "../components/LogoBig";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -140,6 +141,7 @@ const Login = () => {
 
   return (
     <section className="px-3 sm:px-0 overflow-x-hidden overflow-y-scroll flex flex-col items-center justify-center bg-blue-500 bg-opacity-35 bg-bg-login w-screen h-screen">
+      <LogoBig/>
       <form
         onSubmit={handleSubmit(loginSubmitHandler)}
         action="submit"
